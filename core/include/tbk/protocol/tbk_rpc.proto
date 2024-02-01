@@ -1,0 +1,41 @@
+syntax = "proto3";
+package tbk.rpc;
+import "tbk.proto";
+
+service zrpc {
+    rpc Add (AddReq) returns (AddRes) {}
+    rpc Del (DelReq) returns (DelRes) {}
+    rpc Get (GetReq) returns (GetRes) {}
+}
+
+message AddReq{
+    string res_uuid = 1;
+    tbk.pb.Subscriber sub = 2;
+}
+message AddRes{
+    string req_uuid = 1;
+    string res_uuid = 2;
+    bool result = 3;
+    string msg_name = 4;
+}
+message DelReq{
+    string res_uuid = 1;
+    tbk.pb.Subscriber sub = 2;
+}
+message DelRes{
+    string req_uuid = 1;
+    string res_uuid = 2;
+    bool result = 3;
+    string msg_name = 4;
+}
+message GetReq{
+    string req_uuid = 1;
+    string res_uuid = 2;
+    string linker_uuid = 3;
+}
+message GetRes{
+    string req_uuid = 1;
+    string res_uuid = 2;
+    bool result = 3;
+    tbk.pb.Info info = 4;
+}

@@ -1,0 +1,48 @@
+syntax = "proto3";
+package tbk.pb;
+message EndPoint{
+    string address = 1;
+    int32 port = 2;
+}
+message Subscriber{
+    EndPoint ep = 1;
+    string puuid = 2;
+    int32 pid = 3;
+    string uuid = 4;
+    string msg_name = 5;
+    string name = 6;
+    string node_name = 7;
+    string node_ns = 8;
+    string ns = 9;
+}
+message Publisher{
+    string ip = 1;
+    string puuid = 2;
+    int32 pid = 3;
+    string uuid = 4;
+    string msg_name = 5;
+    string name = 6;
+    string node_name = 7;
+    string node_ns = 8;
+    string ns = 9;
+    repeated Subscriber subs = 10;
+}
+message Info{
+    repeated Subscriber subs = 1;
+    repeated Publisher pubs = 2;
+}
+message State{
+    enum ProcessState {
+        P_UNKNOWN = 0;
+        P_STARTING = 1;
+        P_RUNNING = 2;
+        P_EXITING = 3;
+    }
+    string uuid = 1;
+    int32 pid = 2;
+    string node_name = 3;
+    string node_ns = 4; // namespace
+    ProcessState state = 5;
+    EndPoint ep = 6;
+    Info info = 7;
+}

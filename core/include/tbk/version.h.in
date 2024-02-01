@@ -1,0 +1,5 @@
+#ifndef __TBK_VERSION_H__
+#define __TBK_VERSION_H__
+#define TBK_VERSION "@TBK_VERSION@"
+#define BUILD_TIMESTAMP "@BUILD_TIMESTAMP@"
+#endif // __TBK_VERSION_H__

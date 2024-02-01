@@ -1,0 +1,11 @@
+build
+build-*
+CMakeLists.txt.user
+.vscode
+__temp__
+version.h
+install_dir
+__temp__*
+*_pb2.py
+__pycache__
+
