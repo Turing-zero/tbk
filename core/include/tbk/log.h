@@ -15,7 +15,7 @@ namespace tbk{
 //     return fmt::format(s,std::forward<Args>(args)...);
 // }
 namespace __impl{
-typedef Singleton<std::mutex> LogMutex;
+typedef tbk::Singleton<std::mutex> LogMutex;
 template<typename... Ts>
 struct __Log{
     __Log(fmt::text_style style,std::string_view s,const Ts&... ts,const std::source_location& lo=std::source_location::current()){

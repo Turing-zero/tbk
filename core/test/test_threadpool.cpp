@@ -5,7 +5,7 @@
 #include "tbk/utils/threadpool.h"
 
 int main(){
-    ThreadPool pool(4);
+    tbk::ThreadPool pool(4);
     std::vector< std::future<int> > results;
 
     for(int i = 0; i < 8; ++i) {

@@ -1,0 +1,11 @@
+site_name: Turing-zero Bot Kits
+repo_url: https://github.com/Turing-zero/TBK
+theme: 
+  name: material
+  include_homepage_in_nav: true
+  locale: en
+nav:
+  - index.md
+  - Getting Started:
+    - Installation: 0_getting_started/installation.md
+    - Quick Start: 0_getting_started/quick_start.md

@@ -20,7 +20,7 @@ using __callback_type = tbk::type::callback_type;
 using __socket_callback_type = tbk::type::socket_callback_type;
 class SubscriberBase;
 class Publisher;
-class Pool:public Singleton<Pool>,public ThreadPool{
+class Pool:public tbk::Singleton<Pool>,public tbk::ThreadPool{
 public:
     Pool():ThreadPool(tbk::config::threadpool_nums){}
     friend SubscriberBase;

@@ -1,7 +1,8 @@
-#ifndef __SINGLETON_H__
-#define __SINGLETON_H__
+#ifndef __TBK_UTILS_SINGLETON_H__
+#define __TBK_UTILS_SINGLETON_H__
 #include <type_traits>
 #include <iostream>
+namespace tbk{
 template <typename T, typename D = T>
 class Singleton{
     friend D;
@@ -30,4 +31,5 @@ T* Singleton<T, D>::instance(Ts... args){
         inst = new T(args...);
     return inst;
 }
-#endif // __SINGLETON_H__
+} // namespace tbk;
+#endif // __TBK_UTILS_SINGLETON_H__

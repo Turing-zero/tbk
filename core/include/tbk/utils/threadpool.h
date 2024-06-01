@@ -1,6 +1,6 @@
 // https://github.com/progschj/ThreadPool
-#ifndef THREAD_POOL_H
-#define THREAD_POOL_H
+#ifndef __TBK_UTILS_THREAD_POOL_H__
+#define __TBK_UTILS_THREAD_POOL_H__
 
 #ifdef TBK_THREADPOOL_DEBUG
 #include "tbk/log.h"
@@ -16,6 +16,7 @@
 #include <functional>
 #include <stdexcept>
 
+namespace tbk{
 class ThreadPool {
 public:
     ThreadPool(size_t);
@@ -86,5 +87,5 @@ inline ThreadPool::~ThreadPool(){
     for(std::thread &worker: workers)
         worker.join();
 }
-
-#endif
+} // namespace tbk;
+#endif // __TBK_UTILS_THREAD_POOL_H__

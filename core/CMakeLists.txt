@@ -84,7 +84,7 @@ if(PROCESS_COMM)
         include(ExternalProject)
         ExternalProject_Add(etcd-cpp-api
             GIT_REPOSITORY https://github.com/etcd-cpp-apiv3/etcd-cpp-apiv3
-            GIT_TAG v0.14.2
+            GIT_TAG v0.15.4
             SOURCE_DIR ${CMAKE_BINARY_DIR}/3rdparty/source/etcd-cpp-api
             CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/3rdparty/
         )

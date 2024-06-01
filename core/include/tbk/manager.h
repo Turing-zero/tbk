@@ -21,7 +21,7 @@
 namespace tbk{
 class PublisherBase;
 class SubscriberBase;
-class manager:public Singleton<manager>{
+class manager:public tbk::Singleton<manager>{
     // friend class rpc::zrpcImpl;
 public:
     manager(const char* _name="",const char* _namespace="");

@@ -14,7 +14,7 @@
 #include "tbk/utils/singleton.h"
 
 namespace tbk{
-using __io = Singleton<boost::asio::io_context>;
+using __io = tbk::Singleton<boost::asio::io_context>;
 namespace udp{
 using __callback_type = tbk::type::socket_callback_type;
 using __callback_ep_type = tbk::type::socket_ep_callback_type;

@@ -19,7 +19,7 @@ struct Var<T,false>{
     std::mutex _mutex;
     T _value;
 };
-class Server:public Singleton<Server>{
+class Server:public tbk::Singleton<Server>{
     friend class etcd::ParamsServer;
 public:
     Server():_etcd_params_server(etcd::ParamsServerParam(std::bind(&Server::_cb, this, std::placeholders::_1, std::placeholders::_2))){};
