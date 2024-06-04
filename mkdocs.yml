@@ -4,6 +4,8 @@ theme:
   name: material
   include_homepage_in_nav: true
   locale: en
+  features:
+    - content.code.copy
 markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
@@ -12,9 +14,17 @@ markdown_extensions:
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.superfences
+  - def_list
+  - pymdownx.tasklist:
+      custom_checkbox: true
 nav:
   - index.md
   - 开始:
     - 0_getting_started/overview.md
     - 0_getting_started/installation.md
     - 0_getting_started/quick_start.md
+  - API:
+    - api/overview.md
+  - 其他:
+    - others/features.md
+    - others/CHANGELOG.md
