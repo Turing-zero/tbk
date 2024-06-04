@@ -5,9 +5,8 @@
 TODO
 
 ## 编译
-* build
 ```bash
-cd '${PROJECT_ROOT}'
+cd ${PROJECT_ROOT}
 # get into CORE directory
 cd core
 mkdir -p build
@@ -17,10 +16,12 @@ make -j12
 # install the tbk_core library to the specified path
 make install
 ```
+
 * 通过增加`-DBUILD_TEST=ON`参数，编译测试程序
 * 通过增加`-DBUILD_PYTHON_MODULE=ON`参数，编译python模块
 * 通过增加`-DCMAKE_INSTALL_PREFIX=/tbk_core/install/path`参数，指定安装路径
 
+## 安装 && 测试
 ```bash
 # build demo for cpp testing
 cd ${PROJECT_ROOT}/demos/core_cpp_demo

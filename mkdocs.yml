@@ -1,9 +1,17 @@
 site_name: Turing-zero Bot Kits
 repo_url: https://github.com/Turing-zero/TBK
-theme: 
+theme:
   name: material
   include_homepage_in_nav: true
   locale: en
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
 nav:
   - index.md
   - 开始:
