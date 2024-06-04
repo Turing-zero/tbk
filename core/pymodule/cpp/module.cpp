@@ -26,8 +26,8 @@ public:
         return "test";
     }
 };
-PYBIND11_MODULE(tbkpy, m) {
-    m.doc() = "tbkpy module";
+PYBIND11_MODULE(tbkpylib, m) {
+    m.doc() = "tbkpylib module";
     m.def("init",&tbk::init, "tbk init function", py::arg("name")="", py::arg("symbol")="");
     py::class_<tbk::Data>(m, "Data")
         .def(py::init<>());
@@ -38,6 +38,5 @@ PYBIND11_MODULE(tbkpy, m) {
     py::class_<tbk::Publisher>(m, "Publisher")
         .def(py::init<const std::string&, const std::string&>(), py::arg("name"), py::arg("msg_name"))
         .def("publish", py::overload_cast<const std::string &>(&tbk::Publisher::publish), py::arg("data"));
-    m.def("init", &tbk::init, "tbk init function", py::arg("name")="", py::arg("symbol")="");
     m.def("add", &add, "A function which adds two numbers");
 }

@@ -6,6 +6,7 @@ theme:
   locale: en
 nav:
   - index.md
-  - Getting Started:
-    - Installation: 0_getting_started/installation.md
-    - Quick Start: 0_getting_started/quick_start.md
+  - 开始:
+    - 0_getting_started/overview.md
+    - 0_getting_started/installation.md
+    - 0_getting_started/quick_start.md

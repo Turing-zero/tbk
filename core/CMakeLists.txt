@@ -35,7 +35,6 @@ else()
     message("set BUILD_PYTHON_MODULE -- OFF")
 endif()
 
-
 # generate version header
 execute_process(
     COMMAND ${GIT_EXECUTABLE} describe --tags --dirty --match "v*"
@@ -44,10 +43,19 @@ execute_process(
     RESULT_VARIABLE GIT_DESCRIBE_ERROR_CODE
     OUTPUT_STRIP_TRAILING_WHITESPACE
     )
-if(NOT GIT_DESCRIBE_ERROR_CODE)
-    set(TBK_VERSION ${GIT_DESCRIBE_VERSION})
+execute_process(
+    COMMAND git log -1 --format=%h
+    WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+    OUTPUT_VARIABLE GIT_HASH
+    RESULT_VARIABLE GIT_HASH_ERROR_CODE
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+if(NOT GIT_DESCRIBE_ERROR_CODE AND NOT GIT_HASH_ERROR_CODE)
+    set(TBK_VERSION "${GIT_DESCRIBE_VERSION}.dev+${GIT_HASH}")
+elseif(NOT GIT_HASH_ERROR_CODE)
+    set(TBK_VERSION "0.0.dev+${GIT_HASH}")
 else()
-    set(TBK_VERSION "unknown")
+    set(TBK_VERSION "0.0.dev")
 endif()
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/include/tbk/version.h.in

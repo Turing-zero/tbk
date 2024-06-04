@@ -1,7 +1,7 @@
 import time
 print("---------running test.py---------")
 print("-------try to import tbkpy-------")
-import pymodule.tbkpy as tbkpy
+import tbkpy
 print("------------success--------------")
 print("tbkpy.add(1,2)=", tbkpy.add(1,2))
 tbkpy.init()

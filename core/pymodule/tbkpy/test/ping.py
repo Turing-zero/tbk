@@ -1,5 +1,5 @@
 import time
-import pymodule.tbkpy as tbkpy
+import tbkpy
 
 tbkpy.init("test_ping")
 
