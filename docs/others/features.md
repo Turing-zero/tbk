@@ -1,5 +1,6 @@
-# 功能清单
+# 功能清单 / TodoList
 * tbk manager
+    * [ ] 时间戳相关（时间同步，时间戳校准）
 * tbk comm
     * [ ] 支持其他通信方式（SharedMem，UDP，TCP，针对LTE的通信方案？）
     * [ ] 增加通信设置（保完整性tcp/保实时性udp）
@@ -21,16 +22,23 @@
     * [ ] config each msg
     * [ ] viz for msg
 * tbk param 参数服务器
-    * [ ] gRPC setparam & getparam
+    * [ ] param in different scope/level
+    * [x] param in process
+    * [x] param in ETCD
+    * [x] setparam callback
+    * [ ] setparam & getparam cmd
     * [ ] gui support
-    * [ ] with gui
 * tbk cmd
+    * [ ] tab auto complete
+    * [ ] auto install & auto set PATH
 * tbk plugin
     * [ ] ros
     * [ ] Apollo Cyber RT
     * [ ] LCM
 * others
-    * [x] 使用pip安装
+    * [x] 优化编译方式
+    * [x] add doc
+    * [ ] pip install
     * [ ] 安全性
 * optimization
     * [ ] 目前单机的PingPong不具备优势
