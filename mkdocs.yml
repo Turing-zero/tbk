@@ -23,6 +23,8 @@ nav:
     - 0_getting_started/overview.md
     - 0_getting_started/installation.md
     - 0_getting_started/quick_start.md
+  - 模块介绍:
+    - 1_modules/cmd_tool.md
   - API:
     - api/overview.md
   - 其他:

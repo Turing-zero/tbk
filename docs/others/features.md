@@ -26,7 +26,7 @@
     * [x] param in process
     * [x] param in ETCD
     * [x] setparam callback
-    * [ ] setparam & getparam cmd
+    * [x] setparam & getparam cmd
     * [ ] gui support
 * tbk cmd
     * [ ] tab auto complete

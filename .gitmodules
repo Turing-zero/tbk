@@ -1,0 +1,3 @@
+[submodule "tzcp"]
+	path = tzcp
+	url = https://github.com/Turing-zero/tzcp.git
