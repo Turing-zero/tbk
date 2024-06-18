@@ -70,12 +70,14 @@ find_package(Protobuf REQUIRED)
 find_package(yaml-cpp REQUIRED)
 
 # pb & grpc file
-set(PB_INPUT_DIR ${CMAKE_SOURCE_DIR}/include/tbk/protocol)
+set(TZCP_DIR ${CMAKE_SOURCE_DIR}/../tzcp)
 set(PB_OUTPUT_DIR ${CMAKE_BINARY_DIR}/tbk/protocol)
 file(MAKE_DIRECTORY ${PB_OUTPUT_DIR})
 file(GLOB PB_FILES 
-    ${PB_INPUT_DIR}/*.proto
+    ${TZCP_DIR}/tbk/*.proto
 )
+message("pb input dir: " ${TZCP_DIR})
+message("pb files: " ${PB_FILES})
 if(PROCESS_COMM)
     message("set PROCESS_COMM -- ON")
     add_definitions(-DTBK_PROCESS_COMM)
@@ -104,7 +106,7 @@ if(PROCESS_COMM)
     find_program(_GRPC_CPP_PLUGIN_EXECUTABLE grpc_cpp_plugin)
     foreach(file ${PB_FILES})
         execute_process(COMMAND ${PROTOBUF_PROTOC_EXECUTABLE} 
-        --proto_path=${PB_INPUT_DIR}
+        --proto_path=${TZCP_DIR}/tbk
         --cpp_out=${PB_OUTPUT_DIR}
         --grpc_out=${PB_OUTPUT_DIR}
         --plugin=protoc-gen-grpc=${_GRPC_CPP_PLUGIN_EXECUTABLE}

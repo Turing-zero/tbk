@@ -4,6 +4,11 @@
 
 TODO
 
+## Clone代码
+```bash
+git clone --recurse-submodules https://github.com/Turing-zero/TBK.git
+```
+
 ## 编译
 ```bash
 cd ${PROJECT_ROOT}
