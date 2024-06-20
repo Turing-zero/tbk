@@ -79,7 +79,7 @@ public:
         return _commLevel.load();
     }
 protected:
-    void _socket_cb(const void* data,size_t size){
+    void _msgwrap_cb(const void* data,size_t size){
         this->add_task(data,size);
     }
     bool add_task(const void* data,size_t size){

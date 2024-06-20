@@ -76,8 +76,6 @@ file(MAKE_DIRECTORY ${PB_OUTPUT_DIR})
 file(GLOB PB_FILES 
     ${TZCP_DIR}/tbk/*.proto
 )
-message("pb input dir: " ${TZCP_DIR})
-message("pb files: " ${PB_FILES})
 if(PROCESS_COMM)
     message("set PROCESS_COMM -- ON")
     add_definitions(-DTBK_PROCESS_COMM)

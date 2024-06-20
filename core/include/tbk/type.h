@@ -88,7 +88,7 @@ struct HandleResult{
     std::string msg = "";
     HandleResult() = default;
     HandleResult(bool success, const std::string& msg=""):success(success),msg(msg){}
-};
+}; // TODO use ReqResult instead
 template<typename TPub, typename TSub=TPub>
 struct Info{
     std::map<TPub,PublisherInfo> pubs;

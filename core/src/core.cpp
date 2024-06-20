@@ -20,7 +20,7 @@ SubscriberBase::SubscriberBase(const unsigned int buffer_size,const std::string&
     if(getenv("TBK_DEBUG_CORE")){
         tbk::log("Subscriber Ctor : {}\n",fmt::ptr(this));
     }
-    _socket_callback = std::bind(&SubscriberBase::_socket_cb, this, std::placeholders::_1, std::placeholders::_2);
+    _socket_callback = std::bind(&SubscriberBase::_msgwrap_cb, this, std::placeholders::_1, std::placeholders::_2);
     setCommLevel(CommLevel::Localhost, false);
     if(f){
         _callback = std::bind(f,std::placeholders::_1);
