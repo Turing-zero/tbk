@@ -14,10 +14,12 @@
 #include "tbk/log.h"
 #include "tbk/type.h"
 #include "tbk/socket.h"
+#include "tbk/core_monitor.h"
+#include "tbk/protocol/tbk.pb.h"
 
 namespace tbk{
 using __callback_type = tbk::type::callback_type;
-using __socket_callback_type = tbk::type::socket_callback_type;
+using __socket_callback_type = tbk::type::socket_ep_callback_type;
 class SubscriberBase;
 class Publisher;
 class Pool:public tbk::Singleton<Pool>,public tbk::ThreadPool{
@@ -79,26 +81,15 @@ public:
         return _commLevel.load();
     }
 protected:
-    void _msgwrap_cb(const void* data,size_t size){
-        this->add_task(data,size);
-    }
-    bool add_task(const void* data,size_t size){
-        std::scoped_lock lock{_add_task_mutex};
-        if (need_exit) return false;
-        if(_callback){
-            tbk::Data _data;
-            _data.store(data,size);
-            Pool::_()->enqueue(_callback,std::move(_data));
-        }else{
-            this->_data->store(data,size);
-        }
-        return true;
-    }
+    void _msgwrap_cb(const boost::asio::ip::udp::endpoint& ep,const void* data,size_t size);
+    bool add_task(const void* data,size_t size);
     std::atomic_bool need_exit = false;
     std::mutex _add_task_mutex;
     std::unique_ptr<SemaData> _data;
     __callback_type _callback = {};
     __socket_callback_type _socket_callback = {};
+    MsgWrapMonitor _monitor;
+    tbk::pb::MsgWrap _msg_pack;
 
 
     bool setSocket(const bool report = true);
@@ -124,21 +115,7 @@ public:
     PublisherBase(const std::string& cs,const std::string& name,const std::string& msg_name);
     PublisherBase(const std::string& name,const std::string& msg_name);
     ~PublisherBase();
-    virtual void publish(const void* data = nullptr, const unsigned long size = 0){
-        if(getenv("TBK_DEBUG_CORE")){
-            tbk::log("{}-trigger publish -> receiver nums:{}+{}\n",name(),_subscribers.size(),_u_subscribers.size());
-        }
-        std::shared_lock s_lock(_mutex_subscriber);
-        for(auto& s:_subscribers){
-            s->add_task(data,size);
-        }
-        {
-            std::shared_lock<std::shared_mutex> lock(_mutex_u_subscriber);
-            for(auto& ep:_u_subscribers){
-                _socket.send_to(data,size,ep);
-            }
-        }
-    }
+    virtual void publish(const void* data = nullptr, const unsigned long size = 0);
     std::string name() const{
         return _info.name;
     }
@@ -226,6 +203,8 @@ protected:
     std::set<tbk::udp::endpoint> _u_subscribers = {};
     std::shared_mutex _mutex_u_subscriber;
     PublisherInfo _info;
+    tbk::pb::MsgWrap _msg_pack;
+    uint32_t _msg_index = 0;
 };
 class Publisher:public PublisherBase{
 public:

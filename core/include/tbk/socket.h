@@ -39,11 +39,13 @@ public:
     bool bind(const boost::asio::ip::udp::endpoint& _listen_ep,const __callback_ep_type& f = {}){
         return _bind(_listen_ep,{},f);
     }
-    bool bind(const std::string& ip,const int& port,const __callback_type& f = {}){
+    template<typename CB_TYPE>
+    bool bind(const std::string& ip,const int& port,const CB_TYPE& f = {}){
         boost::asio::ip::udp::endpoint _listen_ep(boost::asio::ip::address::from_string(ip),port);
         return bind(_listen_ep,f);
     }
-    bool bind_any(const std::string& ip,const __callback_type& f={}){
+    template<typename CB_TYPE>
+    bool bind_any(const std::string& ip,const CB_TYPE& f={}){
         auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
         std::mt19937 rng{static_cast<std::mt19937::result_type>(seed)};
         std::uniform_int_distribution<std::mt19937::result_type> dist(10000,60000);
@@ -52,14 +54,15 @@ public:
         do{
             port = dist(rng);
         }while(tbk::checkPortUsage(port) && count++ < 5);
-        auto res = bind(ip,port,f);
+        auto res = bind<CB_TYPE>(ip,port,f);
         if(!res){
             tbk::error("bind failed, tried many times\n");
             return false;
         }
         return true; 
     }
-    bool bind_any(const __callback_type& f={}){
+    template<typename CB_TYPE>
+    bool bind_any(const CB_TYPE& f={}){
         return bind_any("0.0.0.0",f);
     }
     auto get_bind_ep(){
@@ -79,9 +82,6 @@ public:
         auto _if = boost::asio::ip::multicast::outbound_interface(if_num);
         // std::cout << "set interface " << _if << std::endl;
         _socket.set_option(_if);
-    }
-    void set_callback(const __callback_type& f){
-        _callback = std::bind(f,std::placeholders::_1,std::placeholders::_2);
     }
     // use for sender
     void send_to(const std::string& str,const boost::asio::ip::udp::endpoint& ep){

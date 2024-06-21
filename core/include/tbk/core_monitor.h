@@ -9,15 +9,15 @@ namespace tbk{
 template<typename T>
 using ReqResult = std::tuple<bool, T, std::string>;
 struct MsgWrapInfo{
-    std::chrono::time_point<std::chrono::system_clock> recv_time;
-    std::chrono::time_point<std::chrono::system_clock> sent_time;
+    std::chrono::microseconds recv_time;
+    std::chrono::microseconds sent_time;
     int recv_index = -1;
 };
 class MsgWrapMonitor{
-    static const int CALC_MIN_PACK_COUNT = 3;
-    static const int CALC_MAX_PACK_COUNT = 500;
-    static const int CALC_MIN_TIME = 50; // ms
-    static const int CALC_MAX_TIME = 1000; // ms
+    static constexpr int CALC_MIN_PACK_COUNT = 3;
+    static constexpr int CALC_MAX_PACK_COUNT = 500;
+    static constexpr std::chrono::milliseconds CALC_MIN_TIME = std::chrono::milliseconds(50);
+    static constexpr std::chrono::milliseconds CALC_MAX_TIME = std::chrono::milliseconds(1000);
 public:
     ReqResult<float> getFreq();
     ReqResult<float> getFreq(const std::string& name);
@@ -25,7 +25,7 @@ public:
     void addMsg(const std::string& pub_uuid, const MsgWrapInfo& info);
 private:
     std::mutex _mutex;
-    std::map<std::string,tbk::DataQueue<MsgWrapInfo, CALC_MAX_PACK_COUNT>> _recv_times;
+    std::map<std::string,tbk::CircleQueue<MsgWrapInfo, CALC_MAX_PACK_COUNT>> _recv_times;
 };
 } // namespace tbk
 #endif // __TBKCORE_MONITOR_H__

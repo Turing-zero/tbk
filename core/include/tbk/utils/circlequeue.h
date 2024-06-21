@@ -5,10 +5,10 @@
 #include <cassert>
 namespace tbk{
 template <typename T, int SIZE>
-class DataQueue {
+class CircleQueue {
 public:
-	DataQueue()=default;
-    ~DataQueue()=default;
+	CircleQueue()=default;
+    ~CircleQueue()=default;
 	const T& operator[](int index);
 	int capacity() { return SIZE; }
 	int size() { return _size; }
@@ -22,14 +22,14 @@ private:
 };
 
 template<typename T, int SIZE>
-const T& DataQueue<T,SIZE>::operator[](int index) {
+const T& CircleQueue<T,SIZE>::operator[](int index) {
 	assert(index <= 0);
 	assert(index > -SIZE);
 	return _data[((index % SIZE) + SIZE + _currentIndex) % SIZE];
 }
 
 template<typename T, int SIZE>
-void DataQueue<T,SIZE>::push(const T& t) {
+void CircleQueue<T,SIZE>::push(const T& t) {
 	_currentIndex = (_currentIndex + 1) % SIZE;
 	if (_size < SIZE) _size++;
 	_cycle++;

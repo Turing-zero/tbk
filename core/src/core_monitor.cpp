@@ -4,7 +4,7 @@
 namespace tbk{
 template<int QUEUESIZE,typename CompareFunc>
 // use to find the index of the first element that func return 0
-static ReqResult<int> binarySearch(tbk::DataQueue<MsgWrapInfo, QUEUESIZE> dq, const CompareFunc& func, int left=1, int right=1){
+static ReqResult<int> binarySearch(tbk::CircleQueue<MsgWrapInfo, QUEUESIZE> dq, const CompareFunc& func, int left=1, int right=1){
     int size = dq.size();
     if (size < 1){
         return {false, 0, "size < 1"};
@@ -47,9 +47,9 @@ ReqResult<float> MsgWrapMonitor::getFreq(const std::string& pub_uuid){
         return {false, -1, "uuid not found"};
     }
     auto&& infos = _recv_times[pub_uuid];
-    const auto NOW = std::chrono::system_clock::now();
+    const auto NOW = std::chrono::system_clock::now().time_since_epoch();
     auto res = binarySearch<CALC_MAX_PACK_COUNT>(infos, [NOW](const MsgWrapInfo& info,const int index){
-        int timeDiff = std::chrono::duration_cast<std::chrono::milliseconds>(NOW - info.recv_time).count();
+        auto&& timeDiff = std::chrono::duration_cast<std::chrono::microseconds>(NOW - info.recv_time);
         if (-index < CALC_MIN_PACK_COUNT){
             return -1;
         }else if (-index > CALC_MAX_PACK_COUNT){
@@ -66,8 +66,8 @@ ReqResult<float> MsgWrapMonitor::getFreq(const std::string& pub_uuid){
         return {false, -1, std::get<2>(res)};
     }
     int index = std::get<1>(res);
-    int timeDiff = std::chrono::duration_cast<std::chrono::milliseconds>(infos[0].recv_time - infos[index].recv_time).count();
-    return {true, 1000.0*-index / timeDiff, fmt::format("{}pack/{}ms",-index,timeDiff)};
+    int timeDiff = std::chrono::duration_cast<std::chrono::microseconds>(infos[0].recv_time - infos[index].recv_time).count();
+    return {true, 1000000.0*-index / timeDiff, fmt::format("{}pack/{}us",-index,timeDiff)};
 }
 ReqResult<float> MsgWrapMonitor::getHitRate(const std::string& pub_uuid){
     if (_recv_times.find(pub_uuid) == _recv_times.end()){
@@ -83,7 +83,7 @@ ReqResult<float> MsgWrapMonitor::getHitRate(const std::string& pub_uuid){
 }
 void MsgWrapMonitor::addMsg(const std::string& pub_uuid, const MsgWrapInfo& info){
     if (_recv_times.find(pub_uuid) == _recv_times.end()){
-        _recv_times[pub_uuid] = tbk::DataQueue<MsgWrapInfo, CALC_MAX_PACK_COUNT>();
+        _recv_times[pub_uuid] = tbk::CircleQueue<MsgWrapInfo, CALC_MAX_PACK_COUNT>();
     }
     _recv_times[pub_uuid].push(info);
 }

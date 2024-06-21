@@ -5,7 +5,7 @@
 #include <fmt/ranges.h>
 int main(){
     {
-        tbk::DataQueue<int, 10> dq;
+        tbk::CircleQueue<int, 10> dq;
         for(int i=0;i<10;i++){
             dq.push(i);
         }
@@ -23,15 +23,15 @@ int main(){
     {
         tbk::MsgWrapMonitor monitor;
         monitor.addMsg("uuid1", {
-            std::chrono::system_clock::now(),
-            std::chrono::system_clock::now(),
+            std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()),
+            std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()),
             0
         });
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
         for(int i=1;i<100;i++){
             monitor.addMsg("uuid1", {
-                std::chrono::system_clock::now(),
-                std::chrono::system_clock::now(),
+                std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()),
+                std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()),
                 i+1
             });
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
