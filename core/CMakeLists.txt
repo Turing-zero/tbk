@@ -84,23 +84,25 @@ if(PROCESS_COMM)
     pkg_search_module(GRPC REQUIRED grpc)
     pkg_search_module(GRPCPP REQUIRED grpc++)
     # find_package(gRPC REQUIRED)
-    find_package(etcd-cpp-api)
-    message("etcd-cpp-api found: " ${etcd-cpp-api_FOUND})
+    find_package(etcd-cpp-api QUIET)
     ## use ExternalProject_Add if not found gRPC or etcd-cpp-api
     if(NOT etcd-cpp-api_FOUND)
         message("etcd-cpp-api not found, use ExternalProject_Add")
         include(ExternalProject)
-        ExternalProject_Add(etcd-cpp-api
+        ExternalProject_Add(etcd-cpp-api-build
             GIT_REPOSITORY https://github.com/etcd-cpp-apiv3/etcd-cpp-apiv3
             GIT_TAG v0.15.4
             SOURCE_DIR ${CMAKE_BINARY_DIR}/3rdparty/source/etcd-cpp-api
-            CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/3rdparty/
+            CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/3rdparty/install
         )
-        set(ETCD_CPP_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/3rdparty/include)
-        set(ETCD_CPP_LIBRARIES ${CMAKE_BINARY_DIR}/3rdparty/lib/libetcd-cpp-api.so)
+        set(ETCD_CPP_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/3rdparty/install/include)
+        link_directories(${CMAKE_BINARY_DIR}/3rdparty/install/lib)
+        set(ETCD_CPP_LIBRARIES etcd-cpp-api)
+    else()
+        message("etcd-cpp-api found")
     endif()
-    # message("etcd-cpp-api include dir: " ${ETCD_CPP_INCLUDE_DIRS})
-    # message("etcd-cpp-api lib: " ${ETCD_CPP_LIBRARIES})
+    message("etcd-cpp-api include dir: " ${ETCD_CPP_INCLUDE_DIRS})
+    message("etcd-cpp-api lib: " ${ETCD_CPP_LIBRARIES})
     find_program(_GRPC_CPP_PLUGIN_EXECUTABLE grpc_cpp_plugin)
     foreach(file ${PB_FILES})
         execute_process(COMMAND ${PROTOBUF_PROTOC_EXECUTABLE} 
@@ -211,8 +213,6 @@ set(ALL_FILES
     ${HEADER_FILES}
 )
 
-set(addition_libs)
-
 set(addition_libs
     ${Protobuf_LIBRARY}
     # gRPC::grpc++
@@ -220,13 +220,15 @@ set(addition_libs
     ${ETCD_CPP_LIBRARIES}
     )
 
+message("addition_libs: " ${addition_libs})
+
 add_library(tbk_core SHARED ${SOURCE_FILES})
-if(PROCESS_COMM)
-    add_dependencies(tbk_core etcd-cpp-api)
+if(PROCESS_COMM AND (NOT etcd-cpp-api_FOUND))
+    add_dependencies(tbk_core etcd-cpp-api-build)
 endif()
-target_link_libraries(tbk_core INTERFACE ${LIBS} ${addition_libs})
-target_include_directories(tbk_core INTERFACE
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>  
+target_link_libraries(tbk_core PUBLIC ${LIBS} ${addition_libs})
+target_include_directories(tbk_core PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>)
 # add_library(tbk_core_static STATIC ${SOURCE_FILES})
 # target_link_libraries(tbk_core_static INTERFACE ${LIBS} ${addition_libs})
@@ -245,6 +247,7 @@ install(TARGETS tbk_core
     RUNTIME DESTINATION bin
     )
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/tbk DESTINATION include)
+install(DIRECTORY ${CMAKE_BINARY_DIR}/3rdparty/install/ DESTINATION "." USE_SOURCE_PERMISSIONS)
 install(FILES ${PB_HEADER} ${RPC_HEADER} DESTINATION include/tbk/protocol)
 install(EXPORT tbk_core-targets
     FILE tbk_core-targets.cmake

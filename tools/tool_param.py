@@ -76,7 +76,7 @@ def api_set(param, value):
 def api_del(param):
     etcd = etcd3.client()
     r = etcd.delete(f"/tbk/params/{param}")
-    return r, f"Key \"{args.param}\" Not found." if r == False else "OK"
+    return r, f"Key \"{param}\" Not found." if r == False else "OK"
 def api_save(file):
     pass
 def api_load(file):
