@@ -3,6 +3,7 @@
 #include <etcd/SyncClient.hpp>
 #include <etcd/Watcher.hpp>
 #include "tbk/type.h"
+#include "tbk/posix.h"
 namespace tbk{
 namespace etcd{
 std::vector<std::string> decodeKey(const std::string& prefix,const std::string& keyWithPrefix);
@@ -12,11 +13,18 @@ std::string encodePub(const PublisherInfo&);
 PublisherInfo decodePub(const std::string&);
 std::string encodeSub(const SubscriberInfo&);
 SubscriberInfo decodeSub(const std::string&);
+struct CertParam{
+    std::string prefix = tbk::getHomeDir()+"/.tbk/etcdadm/pki";
+    std::string etcdadm_ca = "ca.crt";
+    std::string etcdadm_cert = "etcdctl-etcd-client.crt";
+    std::string etcdadm_key = "etcdctl-etcd-client.key";
+};
 struct ClientParam{
     InfoHandler& infoHandler;
     std::string puuid;
     std::string prefix = "/tbk/ps";
     std::string url = "http://127.0.0.1:2379";
+    CertParam cert;
     const int ttl = 1;
 };
 class Client{
@@ -51,6 +59,7 @@ struct ParamsServerParam{
     std::string prefix = "/tbk/params/global";
     std::string url = "http://127.0.0.1:2379";
     tbk::type::param_callback_type cb;
+    CertParam cert;
     ParamsServerParam() = default;
     ParamsServerParam(const tbk::type::param_callback_type& cb):cb(cb){}
 };

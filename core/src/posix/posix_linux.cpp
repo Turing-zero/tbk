@@ -12,6 +12,7 @@
 #include <sys/types.h>
 #include <ifaddrs.h>
 #include <arpa/inet.h>
+#include <pwd.h>
 namespace tbk{
 // write a function that execute a shell command and return the result
 std::string exec(const char* cmd) {
@@ -32,6 +33,14 @@ std::string exec(const std::string& cmd){
 // get the current process id
 int getProcessId(){
     return getpid();
+}
+// get the current user home directory
+std::string getHomeDir(){
+    std::string homedir = getenv("HOME");
+    if(homedir.empty()){
+        homedir = getpwuid(getuid())->pw_dir;
+    }
+    return homedir;
 }
 // get the current process name
 std::string getProcessName(){

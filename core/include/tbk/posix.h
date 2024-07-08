@@ -8,6 +8,7 @@ const int IPV6 = 0x01<<1;
 std::string exec(const char*);
 std::string exec(const std::string&);
 int getProcessId();
+std::string getHomeDir();
 std::string getProcessName();
 std::string generateUUID();
 std::vector<std::string> getNetworkInterfacesIP(const int ipType = IPV4);

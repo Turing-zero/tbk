@@ -17,12 +17,13 @@ markdown_extensions:
   - def_list
   - pymdownx.tasklist:
       custom_checkbox: true
+plugins:
+  - search
+  - awesome-pages
 nav:
   - index.md
   - 开始:
-    - 0_getting_started/overview.md
-    - 0_getting_started/installation.md
-    - 0_getting_started/quick_start.md
+    - ... | flat | 0_getting_started/*.md
   - 模块介绍:
     - 1_modules/cmd_tool.md
   - API:

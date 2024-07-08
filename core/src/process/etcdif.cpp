@@ -9,7 +9,13 @@ Client::Client(const ClientParam& param)
 :_prefix(param.prefix)
 ,_puuid(param.puuid)
 ,_infoHandler(param.infoHandler)
-,_client(etcdv3::detail::resolve_etcd_endpoints(param.url)){
+,_client(
+    etcdv3::detail::resolve_etcd_endpoints(param.url),
+    fmt::format("{}/{}",param.cert.prefix,param.cert.etcdadm_ca),
+    fmt::format("{}/{}",param.cert.prefix,param.cert.etcdadm_cert),
+    fmt::format("{}/{}",param.cert.prefix,param.cert.etcdadm_key),
+    ""
+){
     _keepalive = _client.leasekeepalive(param.ttl);
     _lease_id = _keepalive->Lease();
     init();
@@ -320,7 +326,13 @@ std::vector<std::string> decodeKey(const std::string& _prefix,const std::string&
 ParamsServer::ParamsServer(const ParamsServerParam& p)
 :_prefix(p.prefix)
 ,__cb(p.cb)
-,_client(etcdv3::detail::resolve_etcd_endpoints(p.url)){
+,_client(
+    etcdv3::detail::resolve_etcd_endpoints(p.url),
+    fmt::format("{}/{}",p.cert.prefix,p.cert.etcdadm_ca),
+    fmt::format("{}/{}",p.cert.prefix,p.cert.etcdadm_cert),
+    fmt::format("{}/{}",p.cert.prefix,p.cert.etcdadm_key),
+    ""
+){
     _watcher = std::make_unique<::etcd::Watcher>(_client,p.prefix,std::bind(&ParamsServer::_cb, this, std::placeholders::_1),true);
 }
 void ParamsServer::_cb(::etcd::Response const& resp){
