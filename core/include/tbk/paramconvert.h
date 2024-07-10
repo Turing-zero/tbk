@@ -22,6 +22,12 @@ struct convert<int>{
     static std::string from(const int& v){
         return std::to_string(v);
     }
+    static std::string type(){
+        return "int";
+    }
+    static std::string info(){
+        return "int";
+    }
 };
 template<>
 struct convert<double>{
@@ -38,6 +44,12 @@ struct convert<double>{
     static std::string from(const double& v){
         return std::to_string(v);
     }
+    static std::string type(){
+        return "double";
+    }
+    static std::string info(){
+        return "double";
+    }
 };
 template<>
 struct convert<std::string>{
@@ -46,6 +58,12 @@ struct convert<std::string>{
     }
     static std::string from(const std::string& v){
         return v;
+    }
+    static std::string type(){
+        return "string";
+    }
+    static std::string info(){
+        return "string";
     }
 };
 template<>
@@ -57,6 +75,12 @@ struct convert<bool>{
     }
     static std::string from(const bool& v){
         return v?"True":"False";
+    }
+    static std::string type(){
+        return "bool";
+    }
+    static std::string info(){
+        return "bool";
     }
 };
 } // namespace tbk::param

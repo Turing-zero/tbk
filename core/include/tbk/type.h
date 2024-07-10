@@ -9,6 +9,7 @@
 #include <boost/asio.hpp>
 #include "tbk/meta.h"
 #include "tbk/data.h"
+#include "paramconvert.h"
 namespace tbk{
 // TODO use
 enum class InfoFrom{
@@ -23,6 +24,42 @@ enum class CommLevel{
     Localhost = 200,
     LocalNetwork = 300,
 };
+namespace param{
+template<>
+struct convert<CommLevel>{
+    static CommLevel to(const std::string& s){
+        if(s == "Manual"){
+            return CommLevel::Manual;
+        }else if(s == "Process"){
+            return CommLevel::Process;
+        }else if(s == "Localhost"){
+            return CommLevel::Localhost;
+        }else if(s == "LocalNetwork"){
+            return CommLevel::LocalNetwork;
+        }
+        return CommLevel::Default;
+    }
+    static std::string from(const CommLevel& v){
+        switch(v){
+            case CommLevel::Manual:
+                return "Manual";
+            case CommLevel::Process:
+                return "Process";
+            case CommLevel::Localhost:
+                return "Localhost";
+            case CommLevel::LocalNetwork:
+                return "LocalNetwork";
+        }
+        return "Default";
+    }
+    static std::string type(){
+        return "Enum<CommLevel>";
+    }
+    static std::string info(){
+        return "Manual|Process|Localhost|LocalNetwork";
+    }
+};
+} // namespace tbk::param
 struct ProcessInfo{
     std::string uuid = "";
     int pid = 0;

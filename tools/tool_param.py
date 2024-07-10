@@ -52,19 +52,29 @@ args = parser.parse_args()
 
 import etcd3
 
+def __client():
+    pkipath = os.path.join(os.path.expanduser("~"),'.tbk/etcdadm/pki')
+    return etcd3.client(
+        host='127.0.0.1',
+        port=2379,
+        ca_cert=os.path.join(pkipath,'ca.crt'),
+        cert_key=os.path.join(pkipath,'etcdctl-etcd-client.key'),
+        cert_cert=os.path.join(pkipath,'etcdctl-etcd-client.crt')
+    )
+
 def api_list(_prefix=None):
-    etcd = etcd3.client()
+    etcd = __client()
     prefix = '/tbk/params/'+(_prefix if _prefix else '')
     res = dict([(r[1].key.decode(),r[0].decode()) for r in etcd.get_prefix(prefix)])
     return res
 def api_get(param):
-    etcd = etcd3.client()
+    etcd = __client()
     r = etcd.get(f"/tbk/params/{param}")
     if r[0] is None:
         return False,f"Key \"{args.param}\" Not found."
     return (True,r[0].decode())
 def api_put(param, value):
-    etcd = etcd3.client()
+    etcd = __client()
     r = etcd.put(f"/tbk/params/{param}",value)
     return True, "OK"
 def api_set(param, value):
@@ -74,7 +84,7 @@ def api_set(param, value):
     else:
         return False,v
 def api_del(param):
-    etcd = etcd3.client()
+    etcd = __client()
     r = etcd.delete(f"/tbk/params/{param}")
     return r, f"Key \"{param}\" Not found." if r == False else "OK"
 def api_save(file):

@@ -15,6 +15,7 @@
 #include "tbk/type.h"
 #include "tbk/socket.h"
 #include "tbk/core_monitor.h"
+#include "tbk/param.h"
 #include "tbk/protocol/tbk.pb.h"
 
 namespace tbk{
@@ -52,8 +53,8 @@ public:
         return res;
     }
     bool setCommLevel(const CommLevel& level, const bool report = true){
-        _commLevel = level;
-        if(_commLevel.load() > CommLevel::Process){
+        _param_commLevel.set(level);
+        if(_param_commLevel.get() > CommLevel::Process){
             setSocket(report);
         }else{
             unsetSocket(report);
@@ -78,7 +79,7 @@ public:
         return getBindEp().port();
     }
     CommLevel commLevel() const{
-        return _commLevel.load();
+        return _param_commLevel.get();
     }
 protected:
     void _msgwrap_cb(const boost::asio::ip::udp::endpoint& ep,const void* data,size_t size);
@@ -91,10 +92,9 @@ protected:
     MsgWrapMonitor _monitor;
     tbk::pb::MsgWrap _msg_pack;
 
-
     bool setSocket(const bool report = true);
     bool unsetSocket(const bool report = true);
-    std::atomic<CommLevel> _commLevel = CommLevel::Default;
+    tbk::Param<CommLevel> _param_commLevel;
     tbk::udp::socket _socket;
     std::mutex _socket_mutex;
     std::atomic_bool _has_socket = false;
@@ -129,11 +129,11 @@ public:
         this->publish(data.data(),data.length());
     }
     bool setCommLevel(const CommLevel& level){
-        _commLevel = level;
+        _param_commLevel.set(level);
         return true;
     }
     CommLevel commLevel() const{
-        return _commLevel.load();
+        return _param_commLevel.get();
     }
 public:
     void link(SubscriberBase* subs){
@@ -198,7 +198,7 @@ protected:
     std::set<SubscriberBase*> _subscribers = {};
     std::shared_mutex _mutex_subscriber;
 
-    std::atomic<CommLevel> _commLevel = CommLevel::Default;
+    tbk::Param<CommLevel> _param_commLevel;
     tbk::udp::socket _socket;
     std::set<tbk::udp::endpoint> _u_subscribers = {};
     std::shared_mutex _mutex_u_subscriber;

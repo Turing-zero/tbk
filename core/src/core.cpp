@@ -17,6 +17,16 @@ SubscriberBase::SubscriberBase(const unsigned int buffer_size,const std::string&
         msg_name,
         this,
         InfoFrom::SELF
+    ),_param_commLevel(
+        fmt::format("__cl__/{}_{}_{}:{}",
+            tbk::manager::_()->node_ns(),
+            tbk::manager::_()->node_name(),
+            name,msg_name),
+        CommLevel::Localhost,
+        [this](const CommLevel& prev,const CommLevel& value){
+            tbk::log("SubscriberBase::setCommLevel : {} -> {}/{}\n",_param_commLevel.name(),tbk::param::convert<CommLevel>::from(prev),tbk::param::convert<CommLevel>::from(value));
+            setCommLevel(value);
+        }
     ){
     if(getenv("TBK_DEBUG_CORE")){
         tbk::log("Subscriber Ctor : {}\n",fmt::ptr(this));
@@ -117,6 +127,16 @@ PublisherBase::PublisherBase(const std::string& cs,const std::string& name,const
         msg_name,
         this,
         InfoFrom::SELF
+    ),_param_commLevel(
+        fmt::format("__cl__/{}_{}_{}:{}",
+            tbk::manager::_()->node_ns(),
+            tbk::manager::_()->node_name(),
+            name,msg_name),
+        CommLevel::Default,
+        [this](const CommLevel&,const CommLevel& value){
+            tbk::log("PublisherBase::setCommLevel : {} -> {}\n",_param_commLevel.name(),tbk::param::convert<CommLevel>::from(value));
+            setCommLevel(value);
+        }
     ){
     if(getenv("TBK_DEBUG_CORE")){
         tbk::log("Publisher Ctor : {}\n",fmt::ptr(this));
