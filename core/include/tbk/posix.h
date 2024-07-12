@@ -12,6 +12,7 @@ std::string getHomeDir();
 std::string getProcessName();
 std::string generateUUID();
 std::vector<std::string> getNetworkInterfacesIP(const int ipType = IPV4);
+std::string getClusterIP();
 bool checkPortUsage(const std::string& address, const int port);
 bool checkPortUsage(const int port);
 } // namespace tbk

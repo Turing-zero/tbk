@@ -53,7 +53,7 @@ public:
         return res;
     }
     bool setCommLevel(const CommLevel& level, const bool report = true){
-        _param_commLevel.set(level);
+        _param_commLevel.set(level,false);
         if(_param_commLevel.get() > CommLevel::Process){
             setSocket(report);
         }else{
@@ -129,7 +129,7 @@ public:
         this->publish(data.data(),data.length());
     }
     bool setCommLevel(const CommLevel& level){
-        _param_commLevel.set(level);
+        _param_commLevel.set(level,false);
         return true;
     }
     CommLevel commLevel() const{

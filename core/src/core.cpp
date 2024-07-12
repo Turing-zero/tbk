@@ -53,7 +53,7 @@ bool SubscriberBase::setSocket(const bool report){
     {
         std::scoped_lock<std::mutex> lock(_socket_mutex);
         if(!_socket.is_running()){
-            _socket.bind_any(_socket_callback);
+            _socket.bind_any(tbk::getClusterIP(),_socket_callback);
             if(getenv("TBK_DEBUG_CORE")){
                 // output asio endpoint address and port
                 tbk::log("socket binded to: {}:{}\n",_socket.get_bind_ep().address().to_string(),_socket.get_bind_ep().port());
@@ -63,6 +63,7 @@ bool SubscriberBase::setSocket(const bool report){
         auto ep = _socket.get_bind_ep();
         _info.ip = ep.address().to_string();
         _info.port = ep.port();
+        tbk::log("SubscriberBase::setSocket : {}:{}\n",_info.ip,_info.port);
         // need fix , keep asio context_io running
         tbk::manager::_()->udpRun();
         if(report)

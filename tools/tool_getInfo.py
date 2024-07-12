@@ -1,12 +1,23 @@
+import os
 import etcd3
 from graphviz import Digraph
 import tbk_pb2 as tbkpb
+
+def __client():
+    pkipath = os.path.join(os.path.expanduser("~"),'.tbk/etcdadm/pki')
+    return etcd3.client(
+        host='127.0.0.1',
+        port=2379,
+        ca_cert=os.path.join(pkipath,'ca.crt'),
+        cert_key=os.path.join(pkipath,'etcdctl-etcd-client.key'),
+        cert_cert=os.path.join(pkipath,'etcdctl-etcd-client.crt')
+    )
 
 if __name__ == "__main__":
     processes = {}
     publishers = {}
     subscribers = {}
-    etcd = etcd3.client()
+    etcd = __client()
 
     prefix = '/tbk/ps'
     res = etcd.get_prefix(prefix)

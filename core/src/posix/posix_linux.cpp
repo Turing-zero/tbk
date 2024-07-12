@@ -6,6 +6,7 @@
 #include <cstdio>
 #include <iostream>
 #include <memory>
+#include <regex>
 #include <stdexcept>
 #include <fmt/format.h>
 
@@ -78,6 +79,20 @@ std::vector<std::string> getNetworkInterfacesIP(const int ipType){
     }
     freeifaddrs(ptr_ifaddrs);
     return res;
+}
+std::string getClusterIP(){
+    auto ifs = getNetworkInterfacesIP(IPV4);
+    auto cluster_nodes_urls = tbk::exec("tbk_etcd info --format {ENDPOINT}");
+    std::regex expr("http(s)://(.*):");
+    std::smatch match;
+    while(std::regex_search(cluster_nodes_urls,match,expr)){
+        auto url = match[2].str();
+        if(std::find(ifs.begin(),ifs.end(),url) != ifs.end()){
+            return url;
+        }
+        cluster_nodes_urls = match.suffix().str();
+    }
+    return "";
 }
 // write a function that check if a given address and port is in use
 bool checkPortUsage(const std::string& address, const int port){

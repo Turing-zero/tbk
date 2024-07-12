@@ -97,8 +97,8 @@ public:
             return _var._value;
         }
     }
-    void set(const T& value){
-        _set(value);
+    void set(const T& value,const bool with_callback=true){
+        _set(value,with_callback);
         param::Server::instance()->set<T>(_name,value);
     }
 private:

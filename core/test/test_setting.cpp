@@ -15,5 +15,8 @@ int main(){
     for(auto i:c){
         std::cout << i << std::endl;
     }
+
+    auto res = tbk::getClusterIP();
+    std::cout << "res : " << res <<  std::endl;
     return 0;
 }
