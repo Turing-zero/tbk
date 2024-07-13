@@ -2,7 +2,27 @@
 
 ## Ubuntu22.04安装依赖
 
-TODO
+* install deps
+```bash
+apt install build-essentials cmake libfmt-dev libprotobuf-dev libyaml-cpp-dev libboost-dev libboost-system-dev libboost-thread-dev libboost-random-dev pkg-config libgrpc++-dev pybind11-dev protobuf-compiler protobuf-compiler-grpc
+```
+* install etcd-cpp-apiv3
+```bash
+apt install libcpprest-dev
+git clone https://github.com/etcd-cpp-apiv3/etcd-cpp-apiv3.git
+# switch to tag v0.15.4
+git checkout v0.15.4
+cd etcd-cpp-apiv3
+mkdir -p build
+cd build
+cmake ..
+make -j`nproc`
+make install
+```
+```bash
+apt install python3-pip
+pip install pybind11
+```
 
 ## Clone代码
 ```bash
