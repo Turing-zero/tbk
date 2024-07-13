@@ -12,7 +12,7 @@ apt install -y libfmt-dev libasio-dev nlohmann-json3-dev libyaml-cpp-dev protobu
 # needed by etcd-cpp-apiv3 if PROCESS_COMM is ON
 apt install -y etcd
 apt install -y libboost-all-dev libssl-dev libgrpc-dev libgrpc++-dev libprotobuf-dev protobuf-compiler-grpc libcpprest-dev
-# needed if BUILD_PYTHON_MODULE is ON
+# needed if BUILD_PY is ON
 pip install "pybind11[global]"
 ```
 

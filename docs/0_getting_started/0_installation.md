@@ -4,23 +4,32 @@
 
 * install deps
 ```bash
-apt install build-essentials cmake libfmt-dev libprotobuf-dev libyaml-cpp-dev libboost-dev libboost-system-dev libboost-thread-dev libboost-random-dev pkg-config libgrpc++-dev pybind11-dev protobuf-compiler protobuf-compiler-grpc
+sudo apt install build-essential cmake libfmt-dev libprotobuf-dev libyaml-cpp-dev libboost-dev libboost-system-dev libboost-thread-dev libboost-random-dev pkg-config libgrpc++-dev pybind11-dev protobuf-compiler protobuf-compiler-grpc nlohmann-json3-dev curl openssh-server
 ```
 * install etcd-cpp-apiv3
 ```bash
-apt install libcpprest-dev
+sudo apt install libcpprest-dev
 git clone https://github.com/etcd-cpp-apiv3/etcd-cpp-apiv3.git
+cd etcd-cpp-apiv3
 # switch to tag v0.15.4
 git checkout v0.15.4
-cd etcd-cpp-apiv3
 mkdir -p build
 cd build
 cmake ..
 make -j`nproc`
-make install
+make install # maybe need sudo
 ```
+* install etcdadm
 ```bash
-apt install python3-pip
+sudo snap install go --classic
+git clone xxx
+cd etcdadm
+
+```
+
+
+```bash
+sudo apt install python3-pip
 pip install pybind11
 ```
 
@@ -36,14 +45,16 @@ cd ${PROJECT_ROOT}
 cd core
 mkdir -p build
 cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=/tbk_core/install/path # -DBUILD_TEST=ON -DBUILD_PYTHON_MODULE=ON 
+cmake .. -DCMAKE_INSTALL_PREFIX=/tbk_core/install/path # -DBUILD_TEST=ON -DBUILD_PY=ON 
+# full version
+# cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/temp_usr_tbk -DBUILD_TEST=ON -DBUILD_PY=ON
 make -j12
 # install the tbk_core library to the specified path
 make install
 ```
 
 * 通过增加`-DBUILD_TEST=ON`参数，编译测试程序
-* 通过增加`-DBUILD_PYTHON_MODULE=ON`参数，编译python模块
+* 通过增加`-DBUILD_PY=ON`参数，编译python模块
 * 通过增加`-DCMAKE_INSTALL_PREFIX=/tbk_core/install/path`参数，指定安装路径
 
 ## 安装 && 测试

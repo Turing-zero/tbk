@@ -166,12 +166,13 @@ void PublisherBase::publish(const void* data, const unsigned long size){
         _msg_pack.set_index(_msg_index++);
         _msg_pack.set_uuid(_info.uuid);
         // _msg_pack.set_type(tbk::pb::MsgWrap::ProtocolType::BYTES); // TODO
-        _msg_pack.set_allocated_data(&data_str);
+        // _msg_pack.set_allocated_data(&data_str); // TODO
+        _msg_pack.set_data(data_str);
         std::shared_lock<std::shared_mutex> lock(_mutex_u_subscriber);
         for(auto& ep:_u_subscribers){
             _socket.send_to(_msg_pack.SerializeAsString(),ep);
         }
-        _msg_pack.release_data();
+        // _msg_pack.release_data();
         _msg_pack.Clear();
     }
 }
