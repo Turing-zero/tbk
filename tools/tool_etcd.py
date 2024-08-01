@@ -13,15 +13,18 @@ def __get_etcdctl_bin():
     HOMEDIR = os.path.expanduser("~")
     return os.path.join(HOMEDIR,'.tbk/etcdadm/bin/etcdctl.sh')
 
+def __get_cmd_additional_args():
+    return ["--cluster","--write-out=table","--command-timeout=1s"]
+
 def api_health():
-    cmd = subprocess.run([__get_etcdctl_bin(), "endpoint", "health", "--cluster","--write-out=table"], stdout=subprocess.PIPE)
+    cmd = subprocess.run([__get_etcdctl_bin(), "endpoint", "health"]+__get_cmd_additional_args(), stdout=subprocess.PIPE)
     output = cmd.stdout.decode("utf-8")
     print(output, end="")
     return cmd.returncode
 def api_status(formatStr=None):
     pass
 def api_info(formatStr=None):
-    cmd = subprocess.run([__get_etcdctl_bin(), "endpoint", "status", "--cluster","--write-out=table"], stdout=subprocess.PIPE)
+    cmd = subprocess.run([__get_etcdctl_bin(), "endpoint", "status"]+__get_cmd_additional_args(), stdout=subprocess.PIPE)
     output = cmd.stdout.decode("utf-8")
     value = ""
     if formatStr is None:
