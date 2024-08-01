@@ -17,6 +17,18 @@ from threading import Thread
 import json
 from urllib.request import urlopen, Request
 
+class MainWindow(gtk.Window):
+    def __init__(self):
+        super().__init__(title="tbkadm")
+        self.set_default_size(800, 600)
+        self.set_position(gtk.WindowPosition.CENTER)
+        self.button = gtk.Button(label="Click Me")
+        self.button.connect("clicked", self.on_button_clicked)
+        self.add(self.button)
+    
+    def on_button_clicked(self, widget):
+        print(f"Hello World, {widget}")
+
 class Indicator():
     def __init__(self):
         self.iconpath = os.path.abspath("tbk_dark.png")
@@ -31,6 +43,10 @@ class Indicator():
         item_getIP.connect('activate', self._test)
         menu.append(item_getIP)
 
+        item_window = gtk.MenuItem(label='Open Window')
+        item_window.connect('activate', self._create_win)
+        menu.append(item_window)
+
         item_quit = gtk.MenuItem(label='Quit')
         item_quit.connect('activate', self._quit)
         menu.append(item_quit)
@@ -38,11 +54,11 @@ class Indicator():
         menu.show_all()
         return menu
     
-    def _quit(self,source):
+    def _quit(self, source):
         notify.uninit()
         gtk.main_quit()
 
-    def _test(self,source):
+    def _test(self, source):
         request = Request('https://ipinfo.io/')
         response = urlopen(request)
         ipinfo = json.loads(response.read())
@@ -60,6 +76,9 @@ class Indicator():
                 iconpath,
                 priority=glib.PRIORITY_DEFAULT
             )
+    def _create_win(self, source):
+        self.window = MainWindow()
+        self.window.show_all()
 def main():
     indicator = Indicator()
     notify.init(APPINDICATOR_ID)
