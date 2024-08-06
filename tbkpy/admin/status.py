@@ -64,12 +64,13 @@ class StatusNode:
     def __recv(self):
         while True:
             res, recv = self.receiver.recv()
-            if res:
+            if res == 0:
                 msg, endpoint = recv
                 msg = json.loads(msg.decode())
-                if msg["ip"] == self._status.ip: # skip the local status
+                if "ip" not in msg or msg["ip"] == self._status.ip: # skip the local status
                     continue
                 self.all_info[endpoint[0]] = msg
+            time.sleep(0.1)
     @property
     def info(self):
         return self.all_info

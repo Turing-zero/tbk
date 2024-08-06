@@ -22,12 +22,14 @@ make install # maybe need sudo
 * install etcdadm
 ```bash
 sudo snap install go --classic
-git clone xxx
+git clone https://github.com/Turing-zero/etcdadm.git
 cd etcdadm
-
+make
+# install the etcdadm binary to the specified path
+make install
 ```
 
-
+* install pybind11 for python module
 ```bash
 sudo apt install python3-pip
 pip install pybind11
