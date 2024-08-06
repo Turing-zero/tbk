@@ -1,3 +1,6 @@
+import sys
+# add the path of tbkpy to sys.path
+sys.path.append("..")
 import os
 import paramiko
 import subprocess
@@ -31,7 +34,6 @@ class Remote:
 
     def close(self):
         self.client.close()
-
 class TBKNode:
     def __init__(self, host, user, password):
         self.remote = Remote(host, user, password)
@@ -98,8 +100,20 @@ class TBKNode:
             return None
         return output['clientURLs'][0]
 
-
 if __name__ == "__main__":
-    node = TBKNode("192.168.31.147", "orangepi", "orangepi")
-    print(f"join  : {node.join()}")
-    print(f"reset : {node.reset()}")
+    import argparse
+    parser = argparse.ArgumentParser(description="tool to manage tbk slave node")
+    parser.add_argument("host", help="host of the slave node")
+    parser.add_argument("user", help="user of the slave node")
+    parser.add_argument("password", help="password of the slave node")
+    commands = parser.add_subparsers(dest="command", help="action")
+    join = commands.add_parser("join", help="set slave node join the cluster")
+    reset = commands.add_parser("reset", help="reset the slave node")
+    args = parser.parse_args()
+    node = TBKNode(args.host, args.user, args.password)
+    if args.command == "join":
+        print(f"join  : {node.join()}")
+    elif args.command == "reset":
+        print(f"reset : {node.reset()}")
+    else:
+        print(f"Error: command {args.command} not found")

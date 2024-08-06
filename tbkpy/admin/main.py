@@ -15,7 +15,11 @@ APPINDICATOR_ID = 'indicatorfromtbk'
 import time
 from threading import Thread
 import json
+import typing
 from urllib.request import urlopen, Request
+
+from tbkpy.config import TBK_STATUE_INTERVAL
+from tbkpy.admin.status import StatusNode, Status
 
 class MainWindow(gtk.Window):
     def __init__(self):
@@ -31,17 +35,24 @@ class MainWindow(gtk.Window):
 
 class Indicator():
     def __init__(self):
-        self.iconpath = os.path.abspath("tbk_dark.png")
-        self.indicator = appindicator.Indicator.new(APPINDICATOR_ID, self.iconpath, appindicator.IndicatorCategory.SYSTEM_SERVICES)
+        self.indicator = appindicator.Indicator.new(APPINDICATOR_ID, self._getIcon(), appindicator.IndicatorCategory.SYSTEM_SERVICES)
         self.indicator.set_status(appindicator.IndicatorStatus.ACTIVE)
         self.indicator.set_menu(self._create_menu())
         self.indicator.set_label("TBK", APPINDICATOR_ID)
+
+        self.statusNode = StatusNode()
+        self._updateThread = Thread(target=self._updateThread)
+        self._updateThread.start()
     def _create_menu(self):
         menu = gtk.Menu()
 
-        item_getIP = gtk.MenuItem(label='Get IP')
-        item_getIP.connect('activate', self._test)
-        menu.append(item_getIP)
+        item_local_reset = gtk.MenuItem(label='Local Reset Cluster')
+        item_local_reset.connect('activate', self._localReset)
+        menu.append(item_local_reset)
+
+        item_local_init = gtk.MenuItem(label='Local Init New Cluster')
+        item_local_init.connect('activate', self._localInit)
+        menu.append(item_local_init)
 
         item_window = gtk.MenuItem(label='Open Window')
         item_window.connect('activate', self._create_win)
@@ -58,40 +69,48 @@ class Indicator():
         notify.uninit()
         gtk.main_quit()
 
-    def _test(self, source):
-        request = Request('https://ipinfo.io/')
-        response = urlopen(request)
-        ipinfo = json.loads(response.read())
-        notify.Notification.new("IP Info", f"IP: {ipinfo['ip']}\nCity: {ipinfo['city']}\nRegion: {ipinfo['region']}\nCountry: {ipinfo['country']}\nLocation: {ipinfo['loc']}\nOrganization: {ipinfo['org']}", None).show()
+    def _localReset(self, source):
+        self.statusNode.tbklocal.adminReset()
 
-    def resetLabel(self,label,iconpath=None):
+    def _localInit(self, source):
+        self.statusNode.tbklocal.adminInit()
+
+    def resetLabel(self,label,status=None):
         glib.idle_add(
             self.indicator.set_label,
             label, APPINDICATOR_ID,
             priority=glib.PRIORITY_DEFAULT
         )
-        if iconpath:
+        if status:
             glib.idle_add(
                 self.indicator.set_icon,
-                iconpath,
+                self._getIcon(status),
                 priority=glib.PRIORITY_DEFAULT
             )
     def _create_win(self, source):
         self.window = MainWindow()
         self.window.show_all()
+    
+    def _getIcon(self, status: typing.Optional[str]=None):
+        if status is None:
+            status = "orange"
+        return os.path.join(os.path.dirname(__file__),f"tbk_{status}.png")
+
+    def _updateThread(self):
+        while True:
+            time.sleep(TBK_STATUE_INTERVAL)
+            title, label = self.getLabels(self.statusNode.localStatus)
+            self.resetLabel(f"TBK-({title})",label)
+
+    def getLabels(self, status: Status):
+        label = "orange"
+        if status.health == "true":
+            label = "blue" if len(status.clusters) > 1 else "green"
+        return len(status.clusters), label
 def main():
     indicator = Indicator()
     notify.init(APPINDICATOR_ID)
-    Thread(target=run, args=(indicator,)).start()
     gtk.main()
-
-def run(indicator):
-    count = 0
-    while True:
-        time.sleep(1)
-        iconpath = os.path.abspath("tbk_dark.png") if count % 2 == 0 else os.path.abspath("tbk_light.png")
-        indicator.resetLabel(f"TBK-{count}",iconpath)
-        count += 1
 
 if __name__ == "__main__":
     main()
