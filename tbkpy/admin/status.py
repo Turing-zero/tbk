@@ -70,7 +70,7 @@ class StatusNode:
                 if "ip" not in msg or msg["ip"] == self._status.ip: # skip the local status
                     continue
                 self.all_info[endpoint[0]] = msg
-            time.sleep(0.1)
+            time.sleep(0.01)
     @property
     def info(self):
         return self.all_info
