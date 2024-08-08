@@ -38,6 +38,7 @@ pip install pybind11
 ## Clone代码
 ```bash
 git clone --recurse-submodules https://github.com/Turing-zero/TBK.git
+# git clone -b dev --recurse-submodules https://github.com/Turing-zero/TBK.git
 ```
 
 ## 编译

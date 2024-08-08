@@ -71,11 +71,10 @@ find_package(yaml-cpp REQUIRED)
 
 # pb & grpc file
 set(TZCP_DIR ${CMAKE_SOURCE_DIR}/../tzcp)
-set(PB_OUTPUT_DIR ${CMAKE_BINARY_DIR}/tbk/protocol)
-file(MAKE_DIRECTORY ${PB_OUTPUT_DIR})
-file(GLOB PB_FILES 
-    ${TZCP_DIR}/tbk/*.proto
-)
+set(PB_OUTPUT_DIR ${CMAKE_BINARY_DIR}/tzcp_gen)
+execute_process(COMMAND ${TZCP_DIR}/gen.sh)
+include_directories(${PB_OUTPUT_DIR})
+
 if(PROCESS_COMM)
     message("set PROCESS_COMM -- ON")
     add_definitions(-DTBK_PROCESS_COMM)
@@ -103,15 +102,6 @@ if(PROCESS_COMM)
     endif()
     message("etcd-cpp-api include dir: " ${ETCD_CPP_INCLUDE_DIRS})
     message("etcd-cpp-api lib: " ${ETCD_CPP_LIBRARIES})
-    find_program(_GRPC_CPP_PLUGIN_EXECUTABLE grpc_cpp_plugin)
-    foreach(file ${PB_FILES})
-        execute_process(COMMAND ${PROTOBUF_PROTOC_EXECUTABLE} 
-        --proto_path=${TZCP_DIR}/tbk
-        --cpp_out=${PB_OUTPUT_DIR}
-        --grpc_out=${PB_OUTPUT_DIR}
-        --plugin=protoc-gen-grpc=${_GRPC_CPP_PLUGIN_EXECUTABLE}
-        ${file})
-    endforeach()
     function(get_grpc_file H CPP)
         list(APPEND PH ${ARGN})
         list(APPEND PC ${ARGN})
@@ -124,12 +114,6 @@ if(PROCESS_COMM)
     endfunction()
 else()
     message("set PROCESS_COMM -- OFF")
-    foreach(file ${PB_FILES})
-        execute_process(COMMAND ${PROTOBUF_PROTOC_EXECUTABLE} 
-        --proto_path=${PB_INPUT_DIR}
-        --cpp_out=${PB_OUTPUT_DIR}
-        ${file})
-    endforeach()
 endif()
 function(get_pb_file H CPP)
 	list(APPEND PH ${ARGN})
@@ -192,9 +176,9 @@ set(LIBS
     ${YAML_CPP_LIBRARIES}
     )
 
-get_pb_file(PB_HEADER PB_CPP tbk tbk_test tbk_rpc)
+get_pb_file(PB_HEADER PB_CPP tbk/tbk tbk/tbk_test tbk/tbk_rpc)
 if(PROCESS_COMM)
-    get_grpc_file(RPC_HEADER RPC_CPP tbk_rpc tbk)
+    get_grpc_file(RPC_HEADER RPC_CPP tbk/tbk_rpc tbk/tbk)
 else()
     set(RPC_HEADER)
     set(RPC_CPP)

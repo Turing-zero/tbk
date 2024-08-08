@@ -1,6 +1,6 @@
 #include "tbk/log.h"
 #include "tbk/socketplugin.h"
-#include "tbk/protocol/tbk_test.pb.h"
+#include "tbk/tbk_test.pb.h"
 void _cb(const tbk::pb::Msg4Test& msg){
     std::cout << "Received: " << msg.DebugString() << std::endl;
 }

@@ -1,7 +1,7 @@
 #include "etcd/Watcher.hpp"
 #include "etcd/KeepAlive.hpp"
 #include "tbk/process/etcdif.h"
-#include "tbk/protocol/tbk.pb.h"
+#include "tbk/tbk.pb.h"
 #include "tbk/log.h"
 namespace tbk{
 namespace etcd{

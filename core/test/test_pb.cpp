@@ -1,4 +1,4 @@
-#include "tbk/protocol/tbk_test.pb.h"
+#include "tbk/tbk_test.pb.h"
 #include <fmt/format.h>
 #include <nlohmann/json.hpp>
 
