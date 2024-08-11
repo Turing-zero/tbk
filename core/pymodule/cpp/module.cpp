@@ -16,6 +16,7 @@ class SubscriberPy: public tbk::Subscriber<0>{
     py_callback_type _py_callback = {};
     void _cpp_cb(const tbk::Data& data){
         if(_py_callback){
+            py::gil_scoped_acquire guard{};
             _py_callback(py::bytes(static_cast<const char*>(data.data()), data.size()));
         }
     }

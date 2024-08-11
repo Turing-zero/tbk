@@ -9,10 +9,9 @@ sudo apt install build-essential cmake libfmt-dev libprotobuf-dev libyaml-cpp-de
 * install etcd-cpp-apiv3
 ```bash
 sudo apt install libcpprest-dev
-git clone https://github.com/etcd-cpp-apiv3/etcd-cpp-apiv3.git
+# clone tag v0.15.4
+git clone -b v0.15.4 https://github.com/etcd-cpp-apiv3/etcd-cpp-apiv3.git
 cd etcd-cpp-apiv3
-# switch to tag v0.15.4
-git checkout v0.15.4
 mkdir -p build
 cd build
 cmake ..
@@ -24,6 +23,10 @@ make install # maybe need sudo
 sudo snap install go --classic
 git clone https://github.com/Turing-zero/etcdadm.git
 cd etcdadm
+# optional set proxy for module download
+go env -w GO111MODULE=on
+go env -w GOPROXY=https://goproxy.cn,direct
+# build etcdadm
 make
 # install the etcdadm binary to the specified path
 make install
