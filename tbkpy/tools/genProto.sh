@@ -1,1 +1,0 @@
-protoc --python_out=. ../core/include/tbk/protocol/*.proto --proto_path=../core/include/tbk/protocol/

@@ -8,14 +8,9 @@ message("build timestamp: " ${BUILD_TIMESTAMP})
 option(TBK_DEBUG "tbk debug output." OFF)
 option(TBK_USE_CUSTOM_SEMAPHORE "use custom semaphore." ON)
 option(PROCESS_COMM "PROCESS - on:process level comm,off:only thread level comm ." ON)
-option(BUILD_PY "build python module." ON)
 option(BUILD_TEST "build test." ON)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
-# set(CMAKE_AUTOUIC ON)
-# set(CMAKE_AUTOMOC ON)
-# set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -27,12 +22,6 @@ if(TBK_DEBUG)
     # add_definitions(-DTBK_THREADPOOL_DEBUG)
 else()
     message("set TBK_DEBUG -- OFF")
-endif()
-if(BUILD_PY)
-    message("set BUILD_PY -- ON")
-    add_definitions(-DBUILD_PY)
-else()
-    message("set BUILD_PY -- OFF")
 endif()
 
 # generate version header
@@ -219,10 +208,6 @@ target_include_directories(tbk_core PUBLIC
 # target_include_directories(tbk_core INTERFACE
 #     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>  
 #     $<INSTALL_INTERFACE:include>)
-
-if(BUILD_PY)
-    add_subdirectory(pymodule)
-endif()
 
 install(TARGETS tbk_core
     EXPORT tbk_core-targets
