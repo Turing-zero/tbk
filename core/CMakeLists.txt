@@ -216,8 +216,8 @@ install(TARGETS tbk_core
     RUNTIME DESTINATION bin
     )
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/tbk DESTINATION include)
+install(FILES ${PB_HEADER} DESTINATION include/tbk)
 # install(DIRECTORY ${CMAKE_BINARY_DIR}/3rdparty/install/ DESTINATION "." USE_SOURCE_PERMISSIONS)
-install(FILES ${PB_HEADER} DESTINATION include/tbk/protocol)
 install(EXPORT tbk_core-targets
     FILE tbk_core-targets.cmake
     NAMESPACE tbk::

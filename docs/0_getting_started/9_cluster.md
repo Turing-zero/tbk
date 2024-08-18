@@ -10,7 +10,7 @@
     * `etcdctl.sh member list``
     * `etcdctl.sh endpoint health --cluster`` -->
 
-在构建集群时，我们使用了etcdadm的工具，这在之前的[安装步骤](./0_installation.md)中已经提到了。tbk携带了使用python编写的用来调用etcdadm的GUI工具，你可以在tbk目录下使用如下指令运行
+在构建集群时，我们使用了etcdadm的工具，这在之前的[安装步骤](./0_installation.md)中已经提到了。tbk携带了使用python编写的用来调用etcdadm的GUI工具，你可以在终端下使用如下指令
 
 ```bash
 python3 -m tbkpy.admin.main

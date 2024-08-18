@@ -38,48 +38,60 @@ sudo apt install python3-pip
 pip install pybind11
 ```
 
-## Clone代码
+## 安装tbkpy依赖
 ```bash
-git clone --recurse-submodules https://github.com/Turing-zero/TBK.git
-# git clone -b dev --recurse-submodules https://github.com/Turing-zero/TBK.git
+pip install git+https://github.com/Turing-zero/tbkpy.git
 ```
 
-## 编译
+## 从源码编译tbk-core模块
 ```bash
+## 下载源码（当前版本需要dev分支）
+git clone --recurse-submodules https://github.com/Turing-zero/TBK.git
+# git clone -b dev --recurse-submodules https://github.com/Turing-zero/TBK.git
 export TBK_INSTALL_PATH={your/tbk_core/install/path} # your install path for tbk_core, such as $HOME/temp_usr_tbk or /usr/local/tbk
-cd ${PROJECT_ROOT}
-# get into CORE directory
-cd core
+cd ${PROJECT_ROOT}/core
 mkdir -p build
 cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=$TBK_INSTALL_PATH # -DBUILD_TEST=ON -DBUILD_PY=ON 
+cmake .. -DCMAKE_INSTALL_PREFIX=$TBK_INSTALL_PATH # -DBUILD_TEST=ON
 # full version
-# cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/temp_usr_tbk -DBUILD_TEST=ON -DBUILD_PY=ON
-make -j12
+# cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/temp_usr_tbk -DBUILD_TEST=ON
+cmake --build . -j`nproc`
 # install the tbk_core library to the specified path
-make install
+cmake --install .
 ```
 
 * 通过增加`-DBUILD_TEST=ON`参数，编译测试程序
-* 通过增加`-DBUILD_PY=ON`参数，编译python模块
 * 通过增加`-DCMAKE_INSTALL_PREFIX=$TBK_INSTALL_PATH`参数，指定安装路径
+
+## **Optional**. 安装tbkpy-core（tbk-core的python接口）
+```bash
+export CMAKE_ARGS="-DCMAKE_PREFIX_PATH=$TBK_INSTALL_PATH"
+pip install git+https://github.com/Turing-zero/tbkpy-core.git
+```
 
 ## 启动ETCD后台
 
 参考[配置集群](./9_cluster.md)章节
 
 ## 安装 && 测试
-```bash
-# build demo for cpp testing
-cd ${PROJECT_ROOT}/demos/core_cpp_demo
-mkdir -p build
-cd build && cmake .. -DCMAKE_PREFIX_PATH=$TBK_INSTALL_PATH
-make
-./TestTBK
-
-# install python module
-cd ${PROJECT_ROOT}/core/build/pymodule
-python3 -m pip install -e .
-# check if the installation is successful
-python3 -c "import tbkpy"
-```
+* 测试tbk-core
+    ```bash
+    # build demo for cpp testing
+    cd ${PROJECT_ROOT}/demos/core_cpp_demo
+    mkdir -p build
+    cd build && cmake .. -DCMAKE_PREFIX_PATH=$TBK_INSTALL_PATH
+    make
+    ./TestTBK
+    ```
+* 测试tbkpy-core
+    ```bash
+    # 检查是否安装成功
+    pip list | grep tbkpy
+    # 应该有的输出
+    # tbkpy                                0.x.x
+    # tbkpy-core                           0.x.x
+    # 开始ping/pong测试
+    python3 -m tbkpy_core.test.ping
+    # 另一个console下
+    # python3 -m tbkpy_core.test.pong
+    ```

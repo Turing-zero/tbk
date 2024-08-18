@@ -82,7 +82,7 @@ std::vector<std::string> getNetworkInterfacesIP(const int ipType){
 }
 std::string getClusterIP(){
     auto ifs = getNetworkInterfacesIP(IPV4);
-    auto cluster_nodes_urls = tbk::exec("tbk_etcd info --format {ENDPOINT}");
+    auto cluster_nodes_urls = tbk::exec("python3 -m tbkpy.tools.tool_etcd info --format {ENDPOINT}");
     std::regex expr("http(s)://(.*):");
     std::smatch match;
     while(std::regex_search(cluster_nodes_urls,match,expr)){
