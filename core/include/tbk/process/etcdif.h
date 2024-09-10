@@ -7,7 +7,7 @@
 namespace tbk{
 namespace etcd{
 std::vector<std::string> decodeKey(const std::string& prefix,const std::string& keyWithPrefix);
-std::string encodeProcess(const ProcessInfo&);
+std::string encodeProcess(const ProcessInfo&, const DeviceInfo&);
 ProcessInfo decodeProcess(const std::string&);
 std::string encodePub(const PublisherInfo&);
 PublisherInfo decodePub(const std::string&);
@@ -31,7 +31,7 @@ class Client{
 public:
     Client(const ClientParam& param);
     ~Client();
-    bool addProcess(const ProcessInfo&);
+    bool addProcess(const ProcessInfo&, const DeviceInfo &);
     bool removeProcess(const ProcessInfo&);
     bool addPub(const PublisherInfo&);
     bool addSub(const SubscriberInfo&);

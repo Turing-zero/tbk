@@ -1,7 +1,7 @@
 #include "tbk/manager.h"
 #include "tbk/core.h"
 namespace tbk{
-manager::manager(const char* _name,const char* _namespace):_uuid(generateUUID()),_pid(getProcessId()),_name(_name),_namespace(_namespace),context_manager(__io::_())
+manager::manager(const char* _name,const char* _namespace):_device_info(getDeviceInfo()),_uuid(generateUUID()),_pid(getProcessId()),_name(_name),_namespace(_namespace),context_manager(__io::_())
 #ifdef TBK_PROCESS_COMM
     ,_etcd_client(etcd::ClientParam(_info_handler,_uuid))
 #endif
@@ -24,7 +24,7 @@ manager::manager(const char* _name,const char* _namespace):_uuid(generateUUID())
     int port = 0;//rpc_server._port;
     #ifdef TBK_PROCESS_COMM
     {
-        _etcd_client.addProcess(ProcessInfo{_uuid,_pid,_name,_namespace,address,port});
+        _etcd_client.addProcess(ProcessInfo{_uuid,_pid,_name,_namespace,address,port}, _device_info);
     }
     #endif
 }

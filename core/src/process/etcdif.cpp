@@ -106,11 +106,11 @@ void Client::_cb(::etcd::Response const& resp){
         }
     }
 }
-bool Client::addProcess(const ProcessInfo& info){
+bool Client::addProcess(const ProcessInfo& info, const DeviceInfo &device){
     if(getenv("TBK_DEBUG_ETCD")){
         tbk::info("etcd addProcess:{}-{}:{}\n",info.uuid,info.ip,info.port);
     }
-    auto res = _client.add(fmt::format("{}/{}",_prefix,info.uuid), encodeProcess(info),_lease_id);
+    auto res = _client.add(fmt::format("{}/{}",_prefix,info.uuid), encodeProcess(info,device),_lease_id);
     if (res.error_code()) {
         tbk::error("err in addProcess:{},{}-{}\n",info.uuid,res.error_code(),res.error_message());
         return false;
@@ -194,11 +194,20 @@ bool Client::updateSub(const SubscriberInfo& info){
     }
     return true;
 }
-std::string encodeProcess(const ProcessInfo& info){
+std::string encodeProcess(const ProcessInfo& info, const DeviceInfo &device){
     pb::State pb_state;
     pb::EndPoint* pb_ep = pb_state.mutable_ep();
+    pb::DeviceInfo *pb_device = pb_state.mutable_device_info();
     pb_ep->set_address(info.ip);
     pb_ep->set_port(info.port);
+    pb_device->set_uuid(device.uuid);
+    pb_device->set_static_hostname(device.static_hostname);
+    pb_device->set_icon_name(device.icon_name);
+    pb_device->set_machine_id(device.machine_id);
+    pb_device->set_boot_id(device.boot_id);
+    pb_device->set_os(device.os);
+    pb_device->set_kernel(device.kernel);
+    pb_device->set_arch(device.arch);
     pb_state.set_uuid(info.uuid);
     pb_state.set_pid(info.pid);
     pb_state.set_node_name(info.name);

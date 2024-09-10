@@ -46,6 +46,7 @@ private:
     const std::string _namespace;
     const int _pid;
     const std::string _uuid;
+    const DeviceInfo _device_info;
 
     std::thread _t_state_send;
     std::atomic<bool> need_exit = false;

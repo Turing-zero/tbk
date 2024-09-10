@@ -96,17 +96,46 @@ std::string getClusterIP(){
 }
 // write a function that check if a given address and port is in use
 bool checkPortUsage(const std::string& address, const int port){
-    auto res = exec(fmt::format("netstat -tulpn 2>&1 | grep -w {} | grep -w {}",address,port));
+    auto res = exec(fmt::format("ss -anp 2>&1 | grep -w {} | grep -w {}",address,port));
     return res.empty() ? false : true;
 }
 // write a function that check if a given port is in use
 bool checkPortUsage(const int port){
-    auto res = exec(fmt::format("netstat -tulpn 2>&1 | grep -w {}",port));
+    auto res = exec(fmt::format("ss -anp 2>&1 | grep -w {}",port));
     return res.empty() ? false : true;
 }
 std::string generateUUID(){
     auto res = exec("uuidgen");
     res.pop_back();
     return res;
+}
+std::string _match(const std::string& str, const std::string& expr){
+    std::regex _expr(expr);
+    std::smatch _m;
+    if(std::regex_search(str,_m,_expr)){
+        return _m[1].str();
+    }
+    return "";
+}
+DeviceInfo getDeviceInfo(){
+    std::string all_info = exec("hostnamectl");
+    DeviceInfo info;
+    info.uuid = ""; // not implemented yet
+    // example : 
+    //    Static hostname: orangepicm4
+    //          Icon name: computer
+    //         Machine ID: 72d280cae467476b8430f3fb04b8d867
+    //            Boot ID: 21b056874b7447328d4e9c327d273b72
+    //   Operating System: Orange Pi 1.0.4 Bullseye
+    //             Kernel: Linux 5.10.160-rockchip-rk356x
+    //       Architecture: arm64
+    info.static_hostname = _match(all_info,"Static hostname: (.*)");
+    info.icon_name = _match(all_info,"Icon name: (.*)");
+    info.machine_id = _match(all_info,"Machine ID: (.*)");
+    info.boot_id = _match(all_info,"Boot ID: (.*)");
+    info.os = _match(all_info,"Operating System: (.*)");
+    info.kernel = _match(all_info,"Kernel: (.*)");
+    info.arch = _match(all_info,"Architecture: (.*)");
+    return info;
 }
 } // namespace tbk

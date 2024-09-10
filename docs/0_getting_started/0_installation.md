@@ -1,5 +1,8 @@
 # 安装
 
+> sudo apt install python3-gi gobject-introspection gir1.2-gtk-3.0 gir1.2-notify-0.7
+> sudo apt install gir1.2-appindicator3-0.1
+> sudo apt install gir1.2-ayatanaappindicator3-0.1  # in orangepi
 ## Ubuntu22.04安装依赖
 
 * install deps
