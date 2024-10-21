@@ -16,7 +16,7 @@
 #include "tbk/socket.h"
 #include "tbk/core_monitor.h"
 #include "tbk/param.h"
-#include "tbk/tbk.pb.h"
+#include "tzcp/tbk/tbk.pb.h"
 
 namespace tbk{
 using __callback_type = tbk::type::callback_type;

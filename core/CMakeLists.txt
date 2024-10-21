@@ -165,9 +165,9 @@ set(LIBS
     ${YAML_CPP_LIBRARIES}
     )
 
-get_pb_file(PB_HEADER PB_CPP tbk/tbk tbk/tbk_test tbk/tbk_rpc)
+get_pb_file(PB_HEADER PB_CPP tzcp/tbk/tbk tzcp/tbk/tbk_test tzcp/tbk/tbk_rpc)
 if(PROCESS_COMM)
-    get_grpc_file(RPC_HEADER RPC_CPP tbk/tbk_rpc tbk/tbk)
+    get_grpc_file(RPC_HEADER RPC_CPP tzcp/tbk/tbk_rpc tzcp/tbk/tbk)
 else()
     set(RPC_HEADER)
     set(RPC_CPP)

@@ -11,7 +11,7 @@
 #include "tbk/socket.h"
 #include "tbk/setting.h"
 #include "tbk/posix.h"
-#include "tbk/tbk.pb.h"
+#include "tzcp/tbk/tbk.pb.h"
 
 #ifdef TBK_PROCESS_COMM
     // #include "tbk/process/rpc.h"
