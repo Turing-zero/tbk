@@ -9,12 +9,8 @@ SubscriberBase::SubscriberBase(const unsigned int buffer_size,const std::string&
         0,
         tbk::manager::_()->uuid(),
         tbk::manager::_()->pid(),
-        tbk::manager::_()->node_name(),
-        tbk::manager::_()->node_ns(),
-        cs,
         generateUUID(),
-        name,
-        msg_name,
+        EPInfo{cs, name, tbk::manager::_()->node_name(), tbk::manager::_()->node_ns(), msg_name, "UNKNOWN", "UNKNOWN"},
         this,
         InfoFrom::SELF
     ),_param_commLevel(
@@ -120,12 +116,8 @@ PublisherBase::PublisherBase(const std::string& cs,const std::string& name,const
         "",
         tbk::manager::_()->uuid(),
         tbk::manager::_()->pid(),
-        tbk::manager::_()->node_name(),
-        tbk::manager::_()->node_ns(),
-        cs,
         generateUUID(),
-        name,
-        msg_name,
+        {cs, name, tbk::manager::_()->node_name(), tbk::manager::_()->node_ns(), msg_name, "UNKNOWN", "UNKNOWN"},
         this,
         InfoFrom::SELF
     ),_param_commLevel(

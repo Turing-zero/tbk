@@ -69,7 +69,17 @@ struct ProcessInfo{
     int port = 0;
     std::string key = "";
     ProcessInfo() = default;
-    ProcessInfo(const std::string& uuid, const int pid, const std::string& name,const std::string& ns,const std::string address, const int port):uuid(uuid),pid(pid),name(name),ns(ns),ip(address),port(port),key(fmt::format("PROC:{}({}:{})",name,uuid,pid)){}
+    ProcessInfo(const std::string& uuid, const int pid, const std::string& name,const std::string& ns,const std::string address, const int port)
+        :uuid(uuid),pid(pid),name(name),ns(ns),ip(address),port(port),key(fmt::format("PROC:{}({}:{})",name,uuid,pid)){}
+};
+struct EPInfo{ // endpoint info for subscriber and publisher
+    std::string ns = "default";
+    std::string name = "";
+    std::string node_name = "";
+    std::string node_ns = "";
+    std::string msg_name = "";
+    std::string msg_type = "UNKNOWN";
+    std::string msg_type_url = "UNKNOWN";
 };
 struct SubscriberInfo{
     std::string ip = "";
@@ -77,16 +87,13 @@ struct SubscriberInfo{
     std::string puuid = "";
     std::string uuid = "";
     int pid = 0;
-    std::string ns = "default";
-    std::string name = "";
-    std::string msg_name = "";
-    std::string node_name = "";
-    std::string node_ns = "";
+    EPInfo ep_info = {};
     void* ptr = nullptr;
     InfoFrom origin = InfoFrom::UNASSIGNED;
     CommLevel commLevel = CommLevel::Default;
     SubscriberInfo() = default;
-    SubscriberInfo(const std::string& ip, const int port, const std::string& puuid, const int pid,const std::string& node_name,const std::string& node_ns,const std::string& ns,const std::string& uuid, const std::string& name, const std::string& msg_name,void* ptr = nullptr,const InfoFrom origin=InfoFrom::UNASSIGNED):ip(ip),port(port),puuid(puuid),pid(pid),node_name(node_name),node_ns(node_ns),ns(ns),uuid(uuid),name(name),msg_name(msg_name),ptr(ptr),origin(origin){}
+    SubscriberInfo(const std::string& ip, const int port, const std::string& puuid, const int pid, const std::string& uuid, const EPInfo& ep_info, void* ptr = nullptr,const InfoFrom origin=InfoFrom::UNASSIGNED)
+        :ip(ip),port(port),puuid(puuid),pid(pid),ep_info(ep_info),uuid(uuid),ptr(ptr),origin(origin){}
     bool operator<(const SubscriberInfo& rhs) const{
         return uuid < rhs.uuid;
     }
@@ -96,18 +103,16 @@ struct PublisherInfo{
     std::string puuid = "";
     std::string uuid = "";
     int pid = 0;
-    std::string ns = "default";
-    std::string name = "";
-    std::string msg_name = "";
-    std::string node_name = "";
-    std::string node_ns = "";
+    EPInfo ep_info = {};
     void* ptr = nullptr;
     InfoFrom origin = InfoFrom::UNASSIGNED;
     CommLevel commLevel = CommLevel::Default;
     std::set<SubscriberInfo> subs;
     PublisherInfo() = default;
-    PublisherInfo(const std::string& ip, const std::string& puuid,const int pid,const std::string& node_name,const std::string& node_ns,const std::string& ns, const std::string& uuid,const std::string& name, const std::string& msg_name,void* const ptr = nullptr,const InfoFrom origin=InfoFrom::UNASSIGNED):ip(ip),puuid(puuid),pid(pid),node_name(node_name),node_ns(node_ns),ns(ns),uuid(uuid),name(name),msg_name(msg_name),subs({}),ptr(ptr),origin(origin){}
-    PublisherInfo(const std::string& ip, const std::string& puuid,const int pid,const std::string& node_name,const std::string& node_ns,const std::string& ns, const std::string& uuid,const std::string& name, const std::string& msg_name,const SubscriberInfo subs):ip(ip),puuid(puuid),pid(pid),node_name(node_name),node_ns(node_ns),ns(ns),uuid(uuid),name(name),msg_name(msg_name),subs({subs}){}
+    PublisherInfo(const std::string& ip, const std::string& puuid,const int pid, const std::string& uuid, const EPInfo& ep_info, void* const ptr = nullptr,const InfoFrom origin=InfoFrom::UNASSIGNED)
+        :ip(ip),puuid(puuid),pid(pid),uuid(uuid),ep_info(ep_info),subs({}),ptr(ptr),origin(origin){}
+    PublisherInfo(const std::string& ip, const std::string& puuid,const int pid, const std::string& uuid, const EPInfo& ep_info, const SubscriberInfo subs)
+        :ip(ip),puuid(puuid),pid(pid),uuid(uuid),ep_info(ep_info),subs({subs}){}
     bool addSubs(const SubscriberInfo& subs_info){
         subs.insert(subs_info);
         return true;

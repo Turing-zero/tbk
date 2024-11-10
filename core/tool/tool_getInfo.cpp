@@ -7,15 +7,17 @@ const std::string _prefix = "/tbk/ps";
 void printSub(const tbk::SubscriberInfo& info,const std::string& _prefix=""){
     auto prefix = _prefix+"\t";
     std::string str = "";
-    str += fmt::format("{}Sub :\t{}\n",_prefix,info.name);
+    str += fmt::format("{}Sub :\t{}\n",_prefix,info.ep_info.name);
     str += fmt::format("{}puuid :\t\t{}\n",prefix,info.puuid);
     str += fmt::format("{}uuid :\t\t{}\n",prefix,info.uuid);
     str += fmt::format("{}pid :\t\t{}\n",prefix,info.pid);
-    str += fmt::format("{}namespace :\t{}\n",prefix,info.ns);
-    str += fmt::format("{}name :\t\t{}\n",prefix,info.name);
-    str += fmt::format("{}msg_name :\t{}\n",prefix,info.msg_name);
-    str += fmt::format("{}node_name :\t{}\n",prefix,info.node_name);
-    str += fmt::format("{}node_ns :\t{}\n",prefix,info.node_ns);
+    str += fmt::format("{}namespace :\t{}\n",prefix,info.ep_info.ns);
+    str += fmt::format("{}name :\t\t{}\n",prefix,info.ep_info.name);
+    str += fmt::format("{}msg_name :\t{}\n",prefix,info.ep_info.msg_name);
+    str += fmt::format("{}node_name :\t{}\n",prefix,info.ep_info.node_name);
+    str += fmt::format("{}node_ns :\t{}\n",prefix,info.ep_info.node_ns);
+    str += fmt::format("{}msg_type :\t{}\n",prefix,info.ep_info.msg_type);
+    str += fmt::format("{}msg_type_url :\t{}\n",prefix,info.ep_info.msg_type_url);
     str += fmt::format("{}ip :\t\t{}\n",prefix,info.ip);
     str += fmt::format("{}port :\t\t{}\n",prefix,info.port);
     fmt::print("{}",str);
@@ -23,15 +25,17 @@ void printSub(const tbk::SubscriberInfo& info,const std::string& _prefix=""){
 void printPub(const tbk::PublisherInfo& info,const std::string& _prefix=""){
     auto prefix = _prefix+"\t";
     std::string str = "";
-    str += fmt::format("{}Pub :\t{}\n",_prefix,info.name);
+    str += fmt::format("{}Pub :\t{}\n",_prefix,info.ep_info.name);
     str += fmt::format("{}puuid :\t\t{}\n",prefix,info.puuid);
     str += fmt::format("{}uuid :\t\t{}\n",prefix,info.uuid);
     str += fmt::format("{}pid :\t\t{}\n",prefix,info.pid);
-    str += fmt::format("{}namespace :\t{}\n",prefix,info.ns);
-    str += fmt::format("{}name :\t\t{}\n",prefix,info.name);
-    str += fmt::format("{}msg_name :\t{}\n",prefix,info.msg_name);
-    str += fmt::format("{}node_name :\t{}\n",prefix,info.node_name);
-    str += fmt::format("{}node_ns :\t{}\n",prefix,info.node_ns);
+    str += fmt::format("{}namespace :\t{}\n",prefix,info.ep_info.ns);
+    str += fmt::format("{}name :\t\t{}\n",prefix,info.ep_info.name);
+    str += fmt::format("{}msg_name :\t{}\n",prefix,info.ep_info.msg_name);
+    str += fmt::format("{}node_name :\t{}\n",prefix,info.ep_info.node_name);
+    str += fmt::format("{}node_ns :\t{}\n",prefix,info.ep_info.node_ns);
+    str += fmt::format("{}msg_type :\t{}\n",prefix,info.ep_info.msg_type);
+    str += fmt::format("{}msg_type_url :\t{}\n",prefix,info.ep_info.msg_type_url);
     fmt::print("{}",str);
     for(auto const& sub : info.subs){
         printSub(sub,prefix);

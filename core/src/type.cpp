@@ -5,7 +5,7 @@ namespace tbk{
 HandleResult InfoHandler::addPub(PublisherBase* ptr,const PublisherInfo& pub){
     std::unique_lock lock{_self_info_mutex};
     if(getenv("TBK_DEBUG_INFO")){
-        tbk::log("info : addPub-{}-{}\n",pub.msg_name,fmt::ptr(ptr));
+        tbk::log("info : addPub-{}-{}\n",pub.ep_info.msg_name,fmt::ptr(ptr));
     }
     auto res = _self_info.addPub(ptr,pub);
     if(!res.success){
@@ -14,7 +14,7 @@ HandleResult InfoHandler::addPub(PublisherBase* ptr,const PublisherInfo& pub){
     auto& rPub = _self_info.getPub(ptr);
     // iterate self subs and check if any match
     for(auto& [sub_ptr,sub]:_self_info.subs){
-        if(pub.msg_name == sub.msg_name){
+        if(pub.ep_info.msg_name == sub.ep_info.msg_name){
             rPub.addSubs(sub);
             lock.unlock();
             static_cast<tbk::PublisherBase*>(pub.ptr)->link((sub_ptr));
@@ -25,7 +25,7 @@ HandleResult InfoHandler::addPub(PublisherBase* ptr,const PublisherInfo& pub){
     // iterate outer subs and check if any match
     for(auto& [puuid,pair]:_outer_infos){
         for(auto& [uuid,sub]:pair.second.subs){
-            if(pub.msg_name == sub.msg_name && pub.node_ns == sub.node_ns && !rPub.hasSub(sub)){
+            if(pub.ep_info.msg_name == sub.ep_info.msg_name && pub.ep_info.node_ns == sub.ep_info.node_ns && !rPub.hasSub(sub)){
                 if(!sub.ip.empty() && sub.port != 0){
                     rPub.addSubs(sub);
                     static_cast<tbk::PublisherBase*>(pub.ptr)->link_u(false,sub);
@@ -43,7 +43,7 @@ HandleResult InfoHandler::addPub(PublisherBase* ptr,const PublisherInfo& pub){
 HandleResult InfoHandler::addSub(SubscriberBase* ptr,const SubscriberInfo& sub){
     std::unique_lock lock{_self_info_mutex};
     if(getenv("TBK_DEBUG_INFO")){
-        tbk::log("info : addSub-{}-{}\n",sub.msg_name,fmt::ptr(ptr));
+        tbk::log("info : addSub-{}-{}\n",sub.ep_info.msg_name,fmt::ptr(ptr));
     }
     auto res = _self_info.addSub(ptr,sub);
     if(!res.success){
@@ -52,7 +52,7 @@ HandleResult InfoHandler::addSub(SubscriberBase* ptr,const SubscriberInfo& sub){
     std::set<void*> updateList = {};
     // iterate self pubs and check if any match
     for(auto& [ptr,pub]:_self_info.pubs){
-        if(pub.msg_name == sub.msg_name){
+        if(pub.ep_info.msg_name == sub.ep_info.msg_name){
             pub.addSubs(sub);
             static_cast<tbk::PublisherBase*>(pub.ptr)->link(false,static_cast<tbk::SubscriberBase*>(sub.ptr));
             updateList.insert(pub.ptr);
@@ -67,7 +67,7 @@ HandleResult InfoHandler::addSub(SubscriberBase* ptr,const SubscriberInfo& sub){
 HandleResult InfoHandler::removePub(PublisherBase* ptr,const PublisherInfo& pub){
     std::unique_lock lock{_self_info_mutex};
     if(getenv("TBK_DEBUG_INFO")){
-        tbk::log("info : removePub-{}-{}\n",pub.msg_name,fmt::ptr(ptr));
+        tbk::log("info : removePub-{}-{}\n",pub.ep_info.msg_name,fmt::ptr(ptr));
     }
     // check if exist
     if(!_self_info.checkPub(ptr)){
@@ -86,7 +86,7 @@ HandleResult InfoHandler::removePub(PublisherBase* ptr,const PublisherInfo& pub)
 HandleResult InfoHandler::removeSub(SubscriberBase* ptr,const SubscriberInfo& sub){
     std::unique_lock lock{_self_info_mutex};
     if(getenv("TBK_DEBUG_INFO")){
-        tbk::log("info : removeSub-{}-{}\n",sub.msg_name,fmt::ptr(ptr));
+        tbk::log("info : removeSub-{}-{}\n",sub.ep_info.msg_name,fmt::ptr(ptr));
     }
     // check if exist
     if(!_self_info.checkSub(ptr)){
@@ -111,7 +111,7 @@ HandleResult InfoHandler::removeSub(SubscriberBase* ptr,const SubscriberInfo& su
 HandleResult InfoHandler::updatePub(PublisherBase* ptr,const PublisherInfo& pub){
     std::unique_lock lock{_self_info_mutex};
     if(getenv("TBK_DEBUG_INFO")){
-        tbk::log("info : updatePub-{}-{}\n",pub.msg_name,fmt::ptr(ptr));
+        tbk::log("info : updatePub-{}-{}\n",pub.ep_info.msg_name,fmt::ptr(ptr));
     }
     auto res = _self_info.updatePub(ptr,pub);
     return res;
@@ -119,7 +119,7 @@ HandleResult InfoHandler::updatePub(PublisherBase* ptr,const PublisherInfo& pub)
 HandleResult InfoHandler::updateSub(SubscriberBase* ptr,const SubscriberInfo& sub){
     std::unique_lock lock{_self_info_mutex};
     if(getenv("TBK_DEBUG_INFO")){
-        tbk::log("info : updateSub-{}-{}\n",sub.msg_name,fmt::ptr(ptr));
+        tbk::log("info : updateSub-{}-{}\n",sub.ep_info.msg_name,fmt::ptr(ptr));
     }
     // can only use to change ip and port
     auto res = _self_info.updateSub(ptr,sub);
@@ -147,7 +147,7 @@ HandleResult InfoHandler::removeOuter(const ProcessInfo& info){
     // iterate outer subs & self pubs and check if any match
     for(auto& [uuid,sub]:it->second.second.subs){
         for(auto& [ptr,pub]:_self_info.pubs){
-            if(pub.msg_name == sub.msg_name){
+            if(pub.ep_info.msg_name == sub.ep_info.msg_name){
                 pub.removeSubs(sub);
                 static_cast<tbk::PublisherBase*>(pub.ptr)->unlink_u(false,sub);
                 updateList.insert(pub.ptr);
@@ -168,7 +168,7 @@ HandleResult InfoHandler::removeOuterPub(const PublisherInfo& pub){
     if(it == _outer_infos.end()){
         return {true,"uuid not exist"};
     }
-    auto res = it->second.second.removePub(pub.name,pub);
+    auto res = it->second.second.removePub(pub.ep_info.name,pub);
     if(res.success){
         it->second.first = std::time(nullptr);
     }
@@ -180,7 +180,7 @@ HandleResult InfoHandler::removeOuterSub(const SubscriberInfo& sub){
     if(it == _outer_infos.end()){
         return {true,"uuid not exist"};
     }
-    auto res = it->second.second.removeSub(sub.name,sub);
+    auto res = it->second.second.removeSub(sub.ep_info.name,sub);
     if(!res.success){
         return res;
     }
@@ -188,7 +188,7 @@ HandleResult InfoHandler::removeOuterSub(const SubscriberInfo& sub){
     std::set<void*> updateList = {};
     // iterate self pubs and check if any match
     for(auto& [ptr,pub]:_self_info.pubs){
-        if(pub.msg_name == sub.msg_name && pub.hasSub(sub)){
+        if(pub.ep_info.msg_name == sub.ep_info.msg_name && pub.hasSub(sub)){
             pub.removeSubs(sub);
             static_cast<tbk::PublisherBase*>(pub.ptr)->unlink_u(false,sub);
             updateList.insert(pub.ptr);
@@ -206,7 +206,7 @@ HandleResult InfoHandler::updateOuterPub(const PublisherInfo& pub){
     if(it == _outer_infos.end()){
         return {false,"uuid not exist"};
     }
-    auto res = it->second.second.updatePub(pub.name,pub);
+    auto res = it->second.second.updatePub(pub.ep_info.name,pub);
     if(res.success){
         it->second.first = std::time(nullptr);
     }
@@ -218,14 +218,14 @@ HandleResult InfoHandler::updateOuterSub(const SubscriberInfo& sub){
     if(it == _outer_infos.end()){
         return {false,"uuid not exist"};
     }
-    auto res = it->second.second.updateSub(sub.name,sub);
+    auto res = it->second.second.updateSub(sub.ep_info.name,sub);
     if(res.success){
         it->second.first = std::time(nullptr);
     }
     std::set<void*> updateList = {};
     // iterate self pubs and check if any match
     for(auto& [ptr,pub]:_self_info.pubs){
-        if(pub.msg_name == sub.msg_name && !pub.hasSub(sub)){
+        if(pub.ep_info.msg_name == sub.ep_info.msg_name && !pub.hasSub(sub)){
             if(!sub.ip.empty() && sub.port != 0){
                 pub.addSubs(sub);
                 static_cast<tbk::PublisherBase*>(pub.ptr)->link_u(false,sub);

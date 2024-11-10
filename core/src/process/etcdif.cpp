@@ -229,27 +229,35 @@ ProcessInfo decodeProcess(const std::string& data){
 
 std::string encodePub(const PublisherInfo& info){
     pb::Publisher pb_pub;
+    pb::EPInfo* pb_ep_info = pb_pub.mutable_ep_info();
     pb_pub.set_ip(info.ip);
     pb_pub.set_puuid(info.puuid);
     pb_pub.set_pid(info.pid);
     pb_pub.set_uuid(info.uuid);
-    pb_pub.set_msg_name(info.msg_name);
-    pb_pub.set_name(info.name);
-    pb_pub.set_node_name(info.node_name);
-    pb_pub.set_node_ns(info.node_ns);
-    pb_pub.set_ns(info.ns);
+    pb_ep_info->set_node_ns(info.ep_info.node_ns);
+    pb_ep_info->set_node_name(info.ep_info.node_name);
+    pb_ep_info->set_ns(info.ep_info.ns);
+    pb_ep_info->set_name(info.ep_info.name);
+    pb_ep_info->set_msg_name(info.ep_info.msg_name);
+    pb_ep_info->set_msg_type(info.ep_info.msg_type);
+    pb_ep_info->set_msg_type_url(info.ep_info.msg_type_url);
     for(auto& sub_info: info.subs){
         pb::Subscriber* pb_sub = pb_pub.add_subs();
         pb::EndPoint* pb_ep = pb_sub->mutable_ep();
+        pb::EPInfo* pb_ep_info = pb_sub->mutable_ep_info();
         pb_ep->set_address(sub_info.ip);
         pb_ep->set_port(sub_info.port);
         pb_sub->set_puuid(sub_info.puuid);
         pb_sub->set_pid(sub_info.pid);
         pb_sub->set_uuid(sub_info.uuid);
-        pb_sub->set_msg_name(sub_info.msg_name);
-        pb_sub->set_name(sub_info.name);
-        pb_sub->set_node_name(sub_info.node_name);
-        pb_sub->set_node_ns(sub_info.node_ns);
+        pb_ep_info->set_node_ns(sub_info.ep_info.node_ns);
+        pb_ep_info->set_node_name(sub_info.ep_info.node_name);
+        pb_ep_info->set_ns(sub_info.ep_info.ns);
+        pb_ep_info->set_name(sub_info.ep_info.name);
+        pb_ep_info->set_msg_name(sub_info.ep_info.msg_name);
+        pb_ep_info->set_msg_type(sub_info.ep_info.msg_type);
+        pb_ep_info->set_msg_type_url(sub_info.ep_info.msg_type_url);
+
     }
     std::string pb_str;
     pb_pub.SerializeToString(&pb_str);
@@ -263,11 +271,13 @@ PublisherInfo decodePub(const std::string& data){
     info.puuid = pb_pub.puuid();
     info.pid = pb_pub.pid();
     info.uuid = pb_pub.uuid();
-    info.msg_name = pb_pub.msg_name();
-    info.name = pb_pub.name();
-    info.node_name = pb_pub.node_name();
-    info.node_ns = pb_pub.node_ns();
-    info.ns = pb_pub.ns();
+    info.ep_info.msg_name = pb_pub.ep_info().msg_name();
+    info.ep_info.name = pb_pub.ep_info().name();
+    info.ep_info.node_name = pb_pub.ep_info().node_name();
+    info.ep_info.node_ns = pb_pub.ep_info().node_ns();
+    info.ep_info.ns = pb_pub.ep_info().ns();
+    info.ep_info.msg_type = pb_pub.ep_info().msg_type();
+    info.ep_info.msg_type_url = pb_pub.ep_info().msg_type_url();
     for(int i=0;i<pb_pub.subs_size();i++){
         SubscriberInfo sub_info;
         sub_info.ip = pb_pub.subs(i).ep().address();
@@ -275,10 +285,13 @@ PublisherInfo decodePub(const std::string& data){
         sub_info.puuid = pb_pub.subs(i).puuid();
         sub_info.pid = pb_pub.subs(i).pid();
         sub_info.uuid = pb_pub.subs(i).uuid();
-        sub_info.msg_name = pb_pub.subs(i).msg_name();
-        sub_info.name = pb_pub.subs(i).name();
-        sub_info.node_name = pb_pub.subs(i).node_name();
-        sub_info.node_ns = pb_pub.subs(i).node_ns();
+        sub_info.ep_info.node_ns = pb_pub.subs(i).ep_info().node_ns();
+        sub_info.ep_info.node_name = pb_pub.subs(i).ep_info().node_name();
+        sub_info.ep_info.ns = pb_pub.subs(i).ep_info().ns();
+        sub_info.ep_info.name = pb_pub.subs(i).ep_info().name();
+        sub_info.ep_info.msg_name = pb_pub.subs(i).ep_info().msg_name();
+        sub_info.ep_info.msg_type = pb_pub.subs(i).ep_info().msg_type();
+        sub_info.ep_info.msg_type_url = pb_pub.subs(i).ep_info().msg_type_url();
         info.addSubs(std::move(sub_info));
     }
     return std::move(info);
@@ -291,11 +304,14 @@ std::string encodeSub(const SubscriberInfo& info){
     pb_sub.set_puuid(info.puuid);
     pb_sub.set_pid(info.pid);
     pb_sub.set_uuid(info.uuid);
-    pb_sub.set_msg_name(info.msg_name);
-    pb_sub.set_name(info.name);
-    pb_sub.set_node_name(info.node_name);
-    pb_sub.set_node_ns(info.node_ns);
-    pb_sub.set_ns(info.ns);
+    pb::EPInfo* pb_ep_info = pb_sub.mutable_ep_info();
+    pb_ep_info->set_node_ns(info.ep_info.node_ns);
+    pb_ep_info->set_node_name(info.ep_info.node_name);
+    pb_ep_info->set_ns(info.ep_info.ns);
+    pb_ep_info->set_name(info.ep_info.name);
+    pb_ep_info->set_msg_name(info.ep_info.msg_name);
+    pb_ep_info->set_msg_type(info.ep_info.msg_type);
+    pb_ep_info->set_msg_type_url(info.ep_info.msg_type_url);
     std::string pb_str;
     pb_sub.SerializeToString(&pb_str);
     return std::move(pb_str);
@@ -309,11 +325,13 @@ SubscriberInfo decodeSub(const std::string& data){
     info.puuid = pb_sub.puuid();
     info.pid = pb_sub.pid();
     info.uuid = pb_sub.uuid();
-    info.msg_name = pb_sub.msg_name();
-    info.name = pb_sub.name();
-    info.node_name = pb_sub.node_name();
-    info.node_ns = pb_sub.node_ns();
-    info.ns = pb_sub.ns();
+    info.ep_info.node_ns = pb_sub.ep_info().node_ns();
+    info.ep_info.node_name = pb_sub.ep_info().node_name();
+    info.ep_info.ns = pb_sub.ep_info().ns();
+    info.ep_info.name = pb_sub.ep_info().name();
+    info.ep_info.msg_name = pb_sub.ep_info().msg_name();
+    info.ep_info.msg_type = pb_sub.ep_info().msg_type();
+    info.ep_info.msg_type_url = pb_sub.ep_info().msg_type_url();
     return std::move(info);
 }
 std::vector<std::string> decodeKey(const std::string& _prefix,const std::string& keyWithPrefix){

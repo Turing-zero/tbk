@@ -36,10 +36,10 @@ public:
     SubscriberBase(const unsigned int,const std::string& name,const std::string& msg_name,const __callback_type& f = {});
     ~SubscriberBase();
     std::string name() const{
-        return _info.name;
+        return _info.ep_info.name;
     }
     std::string msg_name() const{
-        return _info.msg_name;
+        return _info.ep_info.msg_name;
     }
     // should be used when there's no callback functions
     void get(Data& data){
@@ -117,10 +117,10 @@ public:
     ~PublisherBase();
     virtual void publish(const void* data = nullptr, const unsigned long size = 0);
     std::string name() const{
-        return _info.name;
+        return _info.ep_info.name;
     }
     std::string msg_name() const{
-        return _info.msg_name;
+        return _info.ep_info.msg_name;
     }
     virtual void publish(const Data& data){
         this->publish(data.data(),data.size());
@@ -208,7 +208,7 @@ protected:
 };
 class Publisher:public PublisherBase{
 public:
-    Publisher(const std::string& name):Publisher(name+"_publisher",name){}
+    Publisher(const std::string& msg_name):Publisher(msg_name+"_publisher",msg_name){}
     Publisher(const std::string& name,const std::string& msg_name):PublisherBase(name,msg_name){}
     Publisher(const std::string& cs,const std::string& name,const std::string& msg_name):PublisherBase(cs,name,msg_name){}
 };
