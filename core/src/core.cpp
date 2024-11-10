@@ -3,21 +3,24 @@
 
 namespace tbk{
 SubscriberBase::SubscriberBase(const unsigned int buffer_size,const std::string& name,const std::string& msg_name,const __callback_type& f):SubscriberBase(buffer_size,"",name,msg_name,f){}
-SubscriberBase::SubscriberBase(const unsigned int buffer_size,const std::string& cs,const std::string& name,const std::string& msg_name,const __callback_type& f):_data(std::make_unique<SemaData>(buffer_size))
-    ,_info(
+SubscriberBase::SubscriberBase(const unsigned int buffer_size,const std::string& cs,const std::string& name,const std::string& msg_name,const __callback_type& f)
+    :SubscriberBase(buffer_size,EPInfo{cs,name,"","",msg_name},f){}
+SubscriberBase::SubscriberBase(const unsigned int buffer_size,const EPInfo& ei,const __callback_type& f)
+    :_data(std::make_unique<SemaData>(buffer_size)),
+    _info(
         "",
         0,
         tbk::manager::_()->uuid(),
         tbk::manager::_()->pid(),
         generateUUID(),
-        EPInfo{cs, name, tbk::manager::_()->node_name(), tbk::manager::_()->node_ns(), msg_name, "UNKNOWN", "UNKNOWN"},
+        {ei.ns, ei.name, tbk::manager::_()->node_name(), tbk::manager::_()->node_ns(), ei.msg_name, ei.msg_type, ei.msg_type_url},
         this,
         InfoFrom::SELF
     ),_param_commLevel(
         fmt::format("__cl__/{}_{}_{}:{}",
             tbk::manager::_()->node_ns(),
             tbk::manager::_()->node_name(),
-            name,msg_name),
+            ei.name,ei.msg_name),
         CommLevel::Localhost,
         [this](const CommLevel& prev,const CommLevel& value){
             tbk::log("SubscriberBase::setCommLevel : {} -> {}/{}\n",_param_commLevel.name(),tbk::param::convert<CommLevel>::from(prev),tbk::param::convert<CommLevel>::from(value));
@@ -111,20 +114,21 @@ bool SubscriberBase::add_task(const void* data,size_t size){
 }
 
 PublisherBase::PublisherBase(const std::string& name,const std::string& msg_name):PublisherBase("",name,msg_name){}
-PublisherBase::PublisherBase(const std::string& cs,const std::string& name,const std::string& msg_name)
+PublisherBase::PublisherBase(const std::string& cs,const std::string& name,const std::string& msg_name):PublisherBase(EPInfo{cs,name,"","",msg_name}){}
+PublisherBase::PublisherBase(const EPInfo& ei)
     :_info(
         "",
         tbk::manager::_()->uuid(),
         tbk::manager::_()->pid(),
         generateUUID(),
-        {cs, name, tbk::manager::_()->node_name(), tbk::manager::_()->node_ns(), msg_name, "UNKNOWN", "UNKNOWN"},
+        {ei.ns, ei.name, tbk::manager::_()->node_name(), tbk::manager::_()->node_ns(), ei.msg_name, ei.msg_type, ei.msg_type_url},
         this,
         InfoFrom::SELF
     ),_param_commLevel(
-        fmt::format("__cl__/{}_{}_{}:{}",
+        fmt::format("__cl__/{}_{}_{}:{}({}:{})",
             tbk::manager::_()->node_ns(),
             tbk::manager::_()->node_name(),
-            name,msg_name),
+            ei.name,ei.msg_name,ei.msg_type,ei.msg_type_url),
         CommLevel::Default,
         [this](const CommLevel&,const CommLevel& value){
             tbk::log("PublisherBase::setCommLevel : {} -> {}\n",_param_commLevel.name(),tbk::param::convert<CommLevel>::from(value));

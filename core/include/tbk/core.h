@@ -34,6 +34,7 @@ class SubscriberBase{
 public:
     SubscriberBase(const unsigned int,const std::string& cs,const std::string& name,const std::string& msg_name,const __callback_type& f = {});
     SubscriberBase(const unsigned int,const std::string& name,const std::string& msg_name,const __callback_type& f = {});
+    SubscriberBase(const unsigned int,const EPInfo& ep_info,const __callback_type& f = {});
     ~SubscriberBase();
     std::string name() const{
         return _info.ep_info.name;
@@ -108,12 +109,14 @@ public:
     Subscriber(const std::string& cs,const std::string& name,const std::string& msg_name,const __callback_type& f = {}):SubscriberBase(buffer_size,cs,name,msg_name,f){}
     Subscriber(const int _buffer_size,const std::string& name,const std::string& msg_name,const __callback_type& f = {}):SubscriberBase(_buffer_size,"",name,msg_name,f){}
     Subscriber(const int _buffer_size,const std::string& cs,const std::string& name,const std::string& msg_name,const __callback_type& f = {}):SubscriberBase(_buffer_size,cs,name,msg_name,f){}
+    // Subscriber(const int _buffer_size,const EPInfo& ep_info,const __callback_type& f = {}):SubscriberBase(_buffer_size,ep_info){}
 };
 class PublisherBase{
     friend class InfoHandler;
 public:
     PublisherBase(const std::string& cs,const std::string& name,const std::string& msg_name);
     PublisherBase(const std::string& name,const std::string& msg_name);
+    PublisherBase(const EPInfo& ep_info);
     ~PublisherBase();
     virtual void publish(const void* data = nullptr, const unsigned long size = 0);
     std::string name() const{
@@ -211,6 +214,7 @@ public:
     Publisher(const std::string& msg_name):Publisher(msg_name+"_publisher",msg_name){}
     Publisher(const std::string& name,const std::string& msg_name):PublisherBase(name,msg_name){}
     Publisher(const std::string& cs,const std::string& name,const std::string& msg_name):PublisherBase(cs,name,msg_name){}
+    Publisher(const EPInfo& ep_info):PublisherBase(ep_info){}
 };
 } // namespace tbk
 
