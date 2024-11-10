@@ -4,7 +4,7 @@
 namespace tbk{
 SubscriberBase::SubscriberBase(const unsigned int buffer_size,const std::string& name,const std::string& msg_name,const __callback_type& f):SubscriberBase(buffer_size,"",name,msg_name,f){}
 SubscriberBase::SubscriberBase(const unsigned int buffer_size,const std::string& cs,const std::string& name,const std::string& msg_name,const __callback_type& f)
-    :SubscriberBase(buffer_size,EPInfo{cs,name,"","",msg_name},f){}
+    :SubscriberBase(buffer_size,EPInfo{cs,name,msg_name},f){}
 SubscriberBase::SubscriberBase(const unsigned int buffer_size,const EPInfo& ei,const __callback_type& f)
     :_data(std::make_unique<SemaData>(buffer_size)),
     _info(
@@ -13,7 +13,7 @@ SubscriberBase::SubscriberBase(const unsigned int buffer_size,const EPInfo& ei,c
         tbk::manager::_()->uuid(),
         tbk::manager::_()->pid(),
         generateUUID(),
-        {ei.ns, ei.name, tbk::manager::_()->node_name(), tbk::manager::_()->node_ns(), ei.msg_name, ei.msg_type, ei.msg_type_url},
+        {ei.ns, ei.name, ei.msg_name, ei.msg_type, ei.msg_type_url, tbk::manager::_()->node_name(), tbk::manager::_()->node_ns()},
         this,
         InfoFrom::SELF
     ),_param_commLevel(
@@ -114,14 +114,14 @@ bool SubscriberBase::add_task(const void* data,size_t size){
 }
 
 PublisherBase::PublisherBase(const std::string& name,const std::string& msg_name):PublisherBase("",name,msg_name){}
-PublisherBase::PublisherBase(const std::string& cs,const std::string& name,const std::string& msg_name):PublisherBase(EPInfo{cs,name,"","",msg_name}){}
+PublisherBase::PublisherBase(const std::string& cs,const std::string& name,const std::string& msg_name):PublisherBase(EPInfo{cs,name,msg_name}){}
 PublisherBase::PublisherBase(const EPInfo& ei)
     :_info(
         "",
         tbk::manager::_()->uuid(),
         tbk::manager::_()->pid(),
         generateUUID(),
-        {ei.ns, ei.name, tbk::manager::_()->node_name(), tbk::manager::_()->node_ns(), ei.msg_name, ei.msg_type, ei.msg_type_url},
+        {ei.ns, ei.name, ei.msg_name, ei.msg_type, ei.msg_type_url, tbk::manager::_()->node_name(), tbk::manager::_()->node_ns()},
         this,
         InfoFrom::SELF
     ),_param_commLevel(

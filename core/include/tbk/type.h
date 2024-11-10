@@ -75,11 +75,11 @@ struct ProcessInfo{
 struct EPInfo{ // endpoint info for subscriber and publisher
     std::string ns = "default";
     std::string name = "";
-    std::string node_name = "";
-    std::string node_ns = "";
     std::string msg_name = "";
     std::string msg_type = "UNKNOWN";
     std::string msg_type_url = "UNKNOWN";
+    std::string node_name = "";
+    std::string node_ns = "";
 };
 struct SubscriberInfo{
     std::string ip = "";

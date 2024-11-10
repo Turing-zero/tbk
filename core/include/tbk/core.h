@@ -107,9 +107,10 @@ public:
     Subscriber(const std::string& name,const __callback_type& f = {}):Subscriber(buffer_size,"",name+"_subcriber",name,f){}
     Subscriber(const std::string& name,const std::string& msg_name,const __callback_type& f = {}):SubscriberBase(buffer_size,"",name,msg_name,f){}
     Subscriber(const std::string& cs,const std::string& name,const std::string& msg_name,const __callback_type& f = {}):SubscriberBase(buffer_size,cs,name,msg_name,f){}
+    Subscriber(const EPInfo& ep_info,const __callback_type& f = {}):SubscriberBase(buffer_size,ep_info,f){}
     Subscriber(const int _buffer_size,const std::string& name,const std::string& msg_name,const __callback_type& f = {}):SubscriberBase(_buffer_size,"",name,msg_name,f){}
     Subscriber(const int _buffer_size,const std::string& cs,const std::string& name,const std::string& msg_name,const __callback_type& f = {}):SubscriberBase(_buffer_size,cs,name,msg_name,f){}
-    // Subscriber(const int _buffer_size,const EPInfo& ep_info,const __callback_type& f = {}):SubscriberBase(_buffer_size,ep_info){}
+    Subscriber(const int _buffer_size,const EPInfo& ep_info,const __callback_type& f = {}):SubscriberBase(_buffer_size,ep_info,f){}
 };
 class PublisherBase{
     friend class InfoHandler;
