@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package tbk.protocol;
+
+import "google/protobuf/timestamp.proto";
+
+// 指标数据
+message Metric {
+    string name = 1;
+    MetricType type = 2;
+    double value = 3;
+    map<string, string> labels = 4;
+    google.protobuf.Timestamp timestamp = 5;
+    string unit = 6;
+    string description = 7;
+}
+
+enum MetricType {
+    COUNTER = 0;
+    GAUGE = 1;
+    HISTOGRAM = 2;
+    SUMMARY = 3;
+}
+
+// 指标批次
+message MetricBatch {
+    string node_id = 1;
+    repeated Metric metrics = 2;
+    google.protobuf.Timestamp collection_time = 3;
+}
+
+// 性能指标
+message PerformanceMetrics {
+    // 消息指标
+    uint64 messages_sent = 1;
+    uint64 messages_received = 2;
+    uint64 messages_failed = 3;
+    double message_rate_per_second = 4;
+    
+    // 延迟指标
+    double average_latency_ms = 5;
+    double p95_latency_ms = 6;
+    double p99_latency_ms = 7;
+    
+    // 资源指标
+    double cpu_usage_percent = 8;
+    double memory_usage_mb = 9;
+    double network_io_mbps = 10;
+    
+    // 连接指标
+    uint32 active_connections = 11;
+    uint32 total_connections = 12;
+    uint32 failed_connections = 13;
+}
+
+// 健康检查
+message HealthCheck {
+    string node_id = 1;
+    HealthStatus status = 2;
+    repeated HealthCheckResult checks = 3;
+    google.protobuf.Timestamp timestamp = 4;
+}
+
+enum HealthStatus {
+    HEALTHY = 0;
+    DEGRADED = 1;
+    UNHEALTHY = 2;
+    UNKNOWN = 3;
+}
+
+message HealthCheckResult {
+    string check_name = 1;
+    HealthStatus status = 2;
+    string message = 3;
+    double duration_ms = 4;
+}

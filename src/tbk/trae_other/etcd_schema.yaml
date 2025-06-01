@@ -1,0 +1,36 @@
+# ETCD键值结构设计
+
+# 节点注册
+/tbk/nodes/{node_id}:
+  value: NodeInfo (protobuf)
+  ttl: 30s
+  
+# 主题注册
+/tbk/topics/{namespace}/{topic_name}:
+  value: TopicInfo (protobuf)
+  ttl: persistent
+  
+# 发布者注册
+/tbk/publishers/{namespace}/{topic_name}/{publisher_id}:
+  value: NodeInfo (protobuf)
+  ttl: 30s
+  
+# 订阅者注册
+/tbk/subscribers/{namespace}/{topic_name}/{subscriber_id}:
+  value: NodeInfo (protobuf)
+  ttl: 30s
+  
+# 配置存储
+/tbk/config/{namespace}/{key}:
+  value: ConfigValue (json)
+  ttl: persistent
+  
+# 监控指标
+/tbk/metrics/{node_id}/{metric_name}:
+  value: MetricValue (json)
+  ttl: 300s
+  
+# 分布式锁
+/tbk/locks/{resource_name}:
+  value: LockInfo (json)
+  ttl: 60s

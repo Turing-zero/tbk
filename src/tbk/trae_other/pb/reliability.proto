@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package tbk.protocol;
+
+import "google/protobuf/timestamp.proto";
+
+// 可靠性配置
+message ReliabilityConfig {
+    DeliveryGuarantee delivery_guarantee = 1;
+    uint32 max_retries = 2;
+    uint32 retry_interval_ms = 3;
+    uint32 ack_timeout_ms = 4;
+    bool enable_deduplication = 5;
+    uint32 dedup_window_size = 6;
+}
+
+// 投递保证级别
+enum DeliveryGuarantee {
+    AT_MOST_ONCE = 0;   // 最多一次
+    AT_LEAST_ONCE = 1;  // 至少一次
+    EXACTLY_ONCE = 2;   // 恰好一次
+}
+
+// 重传请求
+message RetransmissionRequest {
+    string subscriber_id = 1;
+    repeated string missing_message_ids = 2;
+    string topic = 3;
+    google.protobuf.Timestamp request_timestamp = 4;
+}
+
+// 心跳消息
+message Heartbeat {
+    string node_id = 1;
+    google.protobuf.Timestamp timestamp = 2;
+    NodeStatus status = 3;
+    map<string, string> metrics = 4;
+}
+
+enum NodeStatus {
+    HEALTHY = 0;
+    DEGRADED = 1;
+    UNHEALTHY = 2;
+    SHUTTING_DOWN = 3;
+}
