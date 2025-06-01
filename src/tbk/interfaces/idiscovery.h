@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <functional>
+#include <map>
 
 namespace tbk::discovery {
 
@@ -27,21 +28,6 @@ public:
     // 事件回调
     using NodeEventCallback = std::function<void(const NodeInfo&, bool /*added*/)>;
     virtual void setNodeEventCallback(NodeEventCallback callback) = 0;
-};
-
-// ETCD实现
-class EtcdDiscovery : public IDiscovery {
-public:
-    EtcdDiscovery(const std::string& etcdEndpoint);
-    
-    bool registerNode(const NodeInfo& info) override;
-    bool unregisterNode(const std::string& nodeId) override;
-    std::vector<NodeInfo> discoverNodes(const std::string& topic) override;
-    NodeInfo getNodeInfo(const std::string& nodeId) override;
-    void setNodeEventCallback(NodeEventCallback callback) override;
-    
-private:
-    // ... existing ETCD implementation ...
 };
 
 }
